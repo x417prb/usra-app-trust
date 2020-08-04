@@ -7,7 +7,17 @@ import ReadonlyUnitField from "./components/ReadonlyUnitField";
 import ChoiceBox from "./components/ChoiceBox";
 import ReadonlyField from "./components/ReadonlyField";
 import UnitField from "./components/UnitField";
-import NumberField from "./components/NumberField";
+import TextField from "./components/TextField";
+import ModuleFields from "./components/ModuleFields";
+
+const labels = {
+  type: "Type",
+  Pm: "Puissance max",
+  Voc: () => <abbr title="Tension en circuit ouvert">V<sub>oc</sub></abbr>,
+  Isc: () => <abbr title="Courant de court-circuit">I<sub>sc</sub></abbr>,
+  Vmp: () => <abbr title="Tension de puissance max">V<sub>mp</sub></abbr>,
+  Imp: () => <abbr title="Courant de puissance max">I<sub>mp</sub></abbr>,
+};
 
 export default function DimFieldsPV({
   project, setValue
@@ -37,17 +47,17 @@ export default function DimFieldsPV({
       value={El.toFixed(2)}
       unit="Kwh/d"
     />
-    <NumberField
+    <TextField
       field={() => <>H<sub>tilt</sub></>}
       value={Htilt.toFixed(2)}
       setValue={value => setValue("Htilt", value)}
     />
-    <NumberField
+    <TextField
       field={() => <>K<sub>loss</sub></>}
       value={Kloss.toFixed(2)}
       setValue={value => setValue("Kloss", value)}
     />
-    <NumberField
+    <TextField
       field="Efficacite d'equilibre"
       value={Ƞb.toFixed(2)}
       setValue={value => setValue("Ƞb", value)}
@@ -64,58 +74,17 @@ export default function DimFieldsPV({
       value={index}
       onChange={value => setValue("module", value)}
     />
-    <div className="mb-3 row">
-      <div className="offset-sm-2 col-sm-7">
-        <div className="card text-white bg-secondary">
-          <div className="card-body"> {
-            module ? <>
-              <div className="mb-2 row">
-                <div className="col-sm-6">
-                  <div className="d-flex">
-                    <div className="flex-fill">Type:</div>
-                    <div className="flex-fill">{module.type}</div>
-                  </div>
-                </div>
-                <div className="col-sm-6">
-                  <div className="d-flex">
-                    <div className="flex-fill">Puissance max:</div>
-                    <div className="flex-fill">{module.Pm} Kw</div>
-                  </div>
-                </div>
-              </div>
-              <div className="mb-2 row">
-                <div className="col-sm-6">
-                  <div className="d-flex">
-                    <div className="flex-fill"><abbr title="Tension en circuit ouvert">V<sub>oc</sub></abbr>:</div>
-                    <div className="flex-fill">{module.Voc} V</div>
-                  </div>
-                </div>
-                <div className="col-sm-6">
-                  <div className="d-flex">
-                    <div className="flex-fill"><abbr title="Courant de court-circuit">I<sub>sc</sub></abbr>:</div>
-                    <div className="flex-fill">{module.Isc} A</div>
-                  </div>
-                </div>
-              </div>
-              <div className="mb-2 row">
-                <div className="col-sm-6">
-                  <div className="d-flex">
-                    <div className="flex-fill"><abbr title="Tension de puissance max">V<sub>mp</sub></abbr>:</div>
-                    <div className="flex-fill">{module.Vmp} V</div>
-                  </div>
-                </div>
-                <div className="col-sm-6">
-                  <div className="d-flex">
-                    <div className="flex-fill"><abbr title="Courant de puissance max">I<sub>mp</sub></abbr>:</div>
-                    <div className="flex-fill">{module.Imp} A</div>
-                  </div>
-                </div>
-              </div>
-            </> : "Selectionner une module."
-          } </div>
-        </div>
-      </div>
-    </div>
+    <ModuleFields
+      module={module ? {
+        type: module.type,
+        Pm: `${module.Pm} Kw`,
+        Voc: `${module.Voc} V`,
+        Isc: `${module.Isc} A`,
+        Vmp: `${module.Vmp} V`,
+        Imp: `${module.Imp} A`,
+      } : null}
+      labels={labels}
+    />
     <UnitField
       value={Vsystem.toFixed(2)} unit="V"
       field={() => <>V<sub>système</sub></>}

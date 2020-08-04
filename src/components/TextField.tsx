@@ -1,6 +1,6 @@
 import React, { HTMLProps } from "react";
 
-export default function NumberField({
+export default function TextField({
   value, setValue, field,
   ...props
 }: HTMLProps<HTMLInputElement> & {
