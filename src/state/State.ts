@@ -45,6 +45,14 @@ export interface PVModuleData {
   Vmp: number;
   Imp: number;
   output: number;
-  temperture: number[];
+  temperture: [number, number];
   type: string;
+}
+
+export interface BatteryModuleData {
+  vendor: string;
+  model: string;
+  Vnom: number;
+  Cnom: number;
+  R: number;
 }

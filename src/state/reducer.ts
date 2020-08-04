@@ -1,6 +1,7 @@
 import State, {
   Project, ProjectNeed,
-  PVModuleData
+  PVModuleData,
+  BatteryModuleData
 } from "./State";
 import Actions from "./actions";
 import { List } from "immutable";
@@ -68,7 +69,21 @@ function calculatePc(Et: number, Eb: number, Kloss: number, Htilt: number) {
   return (Et / (Eb * Kloss * Htilt)) * PSI;
 }
 
-export const modules: PVModuleData[] = [{
+export const BatteryModules: BatteryModuleData[] = [{
+  model: "Solar 12V / 160 Ah",
+  vendor: "Generic",
+  Vnom: 12,
+  Cnom: 160,
+  R: 0.98
+}, {
+  model: "12-CS-11PS",
+  vendor: "Rolls",
+  Vnom: 12,
+  Cnom: 296,
+  R: 0.98
+}];
+
+export const PVModules: PVModuleData[] = [{
   name: "SUNTECH 280Wc",
   Pm: 260,
   Voc: 38.2,
@@ -109,7 +124,7 @@ function reducer(state = initial, action: Actions): State {
 
       const module = project.module;
 
-      const PV = module === -1 ? null : modules[module];
+      const PV = module === -1 ? null : PVModules[module];
     
       const Msc = project.Msc = PV ? Math.ceil(Vsystem / PV.Vmp) : NaN;
       const Mpc = project.Mpc = PV && Msc !== 0 ? Math.ceil(Pc / (Msc * PV.Pm)) : NaN;

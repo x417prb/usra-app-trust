@@ -1,6 +1,6 @@
 import React from "react";
 import { Project } from "./state/State";
-import { modules } from "./state/reducer";
+import { PVModules } from "./state/reducer";
 import { ProjectValueName } from "./state/actions";
 
 import ReadonlyUnitField from "./components/ReadonlyUnitField";
@@ -27,7 +27,7 @@ export default function DimFieldsPV({
 }) {
 
   const index = project.module;
-  const module = index === -1 ? null : modules[index];
+  const module = index === -1 ? null : PVModules[index];
 
   const El = project.El;
   const Vsystem = project.Vsystem;
@@ -70,7 +70,7 @@ export default function DimFieldsPV({
     />
     <ChoiceBox
       label="Choix de module"
-      items={modules}
+      items={PVModules}
       value={index}
       onChange={value => setValue("module", value)}
     />
