@@ -55,8 +55,7 @@ export default connect((state: State, { current }: { current: number }) => {
       </div>
       <div className="tab-pane py-4 fade" id="dim-bat">
         <DimFieldsB
-          Vsystem={project.Vsystem}
-          El={project.El}
+          project={project}
           setValue={(name, value) => setValue(project.id, name, value)}
         />
       </div>

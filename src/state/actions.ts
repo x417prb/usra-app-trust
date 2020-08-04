@@ -58,6 +58,7 @@ export type ProjectValueName = (
   "Kloss" |
   "Ƞb" |
   "module" |
+  "battery" |
   "Vsystem"
 );
 

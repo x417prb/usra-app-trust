@@ -41,7 +41,12 @@ const initial: State = saved ? decode(JSON.parse(saved)) : {
       Pc: 0,
       Vsystem: 0,
       module: -1,
-      Ƞb: 0
+      battery: -1,
+      Ƞb: 0,
+      Nc: 0,
+      DODmax: 0,
+      Ƞout: 0,
+      Cx: 0,
     },
   ])
 };
@@ -67,6 +72,10 @@ const PSI = 1;
 
 function calculatePc(Et: number, Eb: number, Kloss: number, Htilt: number) {
   return (Et / (Eb * Kloss * Htilt)) * PSI;
+}
+
+function calculateCx(Nc: number, El: number, DODmax: number, Vsystem: number, Ƞout: number) {
+  return (Nc * El * 1000) / (DODmax * Vsystem * Ƞout);
 }
 
 export const BatteryModules: BatteryModuleData[] = [{
@@ -125,10 +134,16 @@ function reducer(state = initial, action: Actions): State {
       const module = project.module;
 
       const PV = module === -1 ? null : PVModules[module];
-    
+
       const Msc = project.Msc = PV ? Math.ceil(Vsystem / PV.Vmp) : NaN;
       const Mpc = project.Mpc = PV && Msc !== 0 ? Math.ceil(Pc / (Msc * PV.Pm)) : NaN;
       project.Mt = Mpc * Msc;
+
+      const Nc = project.Nc;
+      const DODmax = project.DODmax;
+      const Ƞout = project.Ƞout;
+
+      project.Cx = calculateCx(Nc, project.El, DODmax, Vsystem, Ƞout);
 
       return {
         ...state,
@@ -184,7 +199,12 @@ function reducer(state = initial, action: Actions): State {
           Pc: 0,
           Vsystem: 0,
           module: -1,
-          Ƞb: 0
+          battery: -1,
+          Ƞb: 0,
+          Nc: 0,
+          DODmax: 0,
+          Ƞout: 0,
+          Cx: 0,
         })
       };
     };

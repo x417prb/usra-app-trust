@@ -18,18 +18,25 @@ export interface Project {
   needs: List<ProjectNeed>;
   El: number;
 
+  module: number;
+  battery: number;
+
   Htilt: number;
   Kloss: number;
 
   Ƞb: number;
   Pc: number;
-  module: number;
 
   Vsystem: number;
 
   Mpc: number;
   Msc: number;
   Mt: number;
+
+  Nc: number;
+  DODmax: number;
+  Ƞout: number;
+  Cx: number;
 
 }
 

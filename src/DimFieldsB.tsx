@@ -1,22 +1,29 @@
 import React from "react";
 import { ProjectValueName } from "./state/actions";
 import ReadonlyUnitField from "./components/ReadonlyUnitField";
-
-function calculateCx(Nc: number, El: number, DODmax: number, Vsystem: number, Ƞout: number) {
-  return (Nc * El * 1000) / (DODmax * Vsystem * Ƞout);
-}
+import ChoiceBox from "./components/ChoiceBox";
+import { BatteryModules } from "./state/reducer";
+import { Project } from "./state/State";
 
 export default function DimFieldsB({
-  Vsystem, El, setValue
+  project, setValue
 }: {
-  El: number;
-  Vsystem: number;
+  project: Project;
   setValue(name: ProjectValueName, value: number): void;
 }) {
 
-  const Cx = calculateCx(0, El, 0, Vsystem, 0);
+  const Cx = project.Cx;
 
   return <>
+    <ChoiceBox
+      label="Choix de battries"
+      onChange={value => setValue("battery", value)}
+      value={project.battery}
+      items={BatteryModules.map(module => ({
+        ...module,
+        name: `${module.Vnom}V / ${module.Cnom} Ah ${module.vendor}`
+      }))}
+    />
     <ReadonlyUnitField
       label="Capacite des batteries a installer"
       value={isFinite(Cx) ? Cx.toFixed(2) : "N/A"}
