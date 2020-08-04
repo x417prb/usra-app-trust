@@ -12,7 +12,7 @@ type StateJSON = Omit<State, 'projects'> & {
   projects: ProjectJSON[]
 };
 
-const saved = localStorage.getItem("state");
+const saved = undefined; // localStorage.getItem("state");
 const initial: State = saved ? decode(JSON.parse(saved)) : {
   projects: List([
     {
@@ -27,10 +27,28 @@ const initial: State = saved ? decode(JSON.parse(saved)) : {
         energy: 1,
         prolifiratedPower: 1,
         selected: false,
-      }])
+      }]),
+      El: 1,
+      Htilt: 0,
+      Kloss: 0,
+      Mpc: 0,
+      Msc: 0,
+      Mt: 0,
+      Pc: 0,
+      Vsystem: 0,
+      module: -1,
+      Ƞb: 0
     },
   ])
 };
+
+function reduceProjectNeedsTotalEnergy(total: number, need: ProjectNeed) {
+  return total + need.energy;
+}
+
+function calculateTotalEnergy(needs: List<ProjectNeed>) {
+  return needs.reduce(reduceProjectNeedsTotalEnergy, 0);
+}
 
 let projectID = initial.projects.reduce((maximum, project) => {
   return Math.max(maximum, project.id + 1);
@@ -41,11 +59,13 @@ function reducer(state = initial, action: Actions): State {
     case "project.needs:set": {
       const { id, needs } = action.payload;
       const projet = state.projects.get(id)!;
+      const $needs = needs.map(need => mutateCalcProjectNeed({ ...need }));
       return {
         ...state,
         projects: state.projects.set(id, {
           ...projet,
-          needs: needs.map(need => mutateCalcProjectNeed({ ...need }))
+          needs: $needs,
+          El: calculateTotalEnergy($needs)
         } as Project)
       };
     }
@@ -75,7 +95,17 @@ function reducer(state = initial, action: Actions): State {
         projects: state.projects.push({
           id: projectID++,
           name, site,
-          needs: List()
+          needs: List(),
+          El: 0,
+          Htilt: 0,
+          Kloss: 0,
+          Mpc: 0,
+          Msc: 0,
+          Mt: 0,
+          Pc: 0,
+          Vsystem: 0,
+          module: -1,
+          Ƞb: 0
         })
       };
     };

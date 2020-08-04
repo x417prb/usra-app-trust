@@ -45,10 +45,16 @@ export default connect((state: State, { current }: { current: number }) => {
         />
       </div>
       <div className="tab-pane py-4 fade" id="dim-pv">
-        <DimFieldsPV needs={project.needs} />
+        <DimFieldsPV
+          needs={project.needs}
+          El={project.El}
+        />
       </div>
       <div className="tab-pane py-4 fade" id="dim-bat">
-        <DimFieldsB Vsystem={0} El={0} />
+        <DimFieldsB
+          Vsystem={project.Vsystem}
+          El={project.El}
+        />
       </div>
     </div>
   </> : <>

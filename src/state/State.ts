@@ -19,7 +19,23 @@ export interface Project {
   id: number;
   name: string;
   site: string;
+
   needs: List<ProjectNeed>;
+  El: number;
+
+  Htilt: number;
+  Kloss: number;
+
+  Ƞb: number;
+  Pc: number;
+  module: number;
+
+  Vsystem: number;
+
+  Mpc: number;
+  Msc: number;
+  Mt: number;
+
 }
 
 export default interface State {

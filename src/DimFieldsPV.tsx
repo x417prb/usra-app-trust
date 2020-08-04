@@ -9,11 +9,12 @@ function calculatePc(Et: number, Eb: number, Kloss: number, Htilt: number) {
   return denomintor !== 0 ? (Et / denomintor) * PSI : NaN;
 }
 
-function reduceProjectNeedsTotalEnergy(total: number, need: ProjectNeed) {
-  return total + need.energy;
-}
-
-export default function DimFieldsPV({ needs }: { needs: List<ProjectNeed> }) {
+export default function DimFieldsPV({
+  needs, El
+}: {
+  El: number;
+  needs: List<ProjectNeed>;
+}) {
 
   const [moduleIndex, setModuleIndex] = useState(-1);
   const [Vsys, setVsys] = useState(0);
@@ -23,8 +24,6 @@ export default function DimFieldsPV({ needs }: { needs: List<ProjectNeed> }) {
   const [Htilt, setHtilt] = useState(0);
   const [Kloss, setKloss] = useState(0);
   const [Ƞb, setȠB] = useState(0);
-
-  const El = needs.reduce(reduceProjectNeedsTotalEnergy, 0);
 
   const Pc = calculatePc(El, Ƞb, Kloss, Htilt);
 
@@ -96,7 +95,7 @@ export default function DimFieldsPV({ needs }: { needs: List<ProjectNeed> }) {
           className="form-select form-select-sm"
           value={moduleIndex}
           onChange={e => setModuleIndex(parseInt(e.target.value, 10))}>
-          <option value={-1}>Selectionner une module</option>
+          <option value={-1}>Selectionner un module</option>
           { modules.map((module, index) => {
             return <option key={index} value={index}>{module.name}</option>
           }) }
