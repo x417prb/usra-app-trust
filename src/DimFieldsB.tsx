@@ -1,14 +1,16 @@
 import React from "react";
+import { ProjectValueName } from "./state/actions";
 
 function calculateCx(Nc: number, El: number, DODmax: number, Vsystem: number, Ƞout: number) {
   return (Nc * El * 1000) / (DODmax * Vsystem * Ƞout);
 }
 
 export default function DimFieldsB({
-  Vsystem, El
+  Vsystem, El, setValue
 }: {
   El: number;
   Vsystem: number;
+  setValue(name: ProjectValueName, value: number): void;
 }) {
 
   const Cx = calculateCx(0, El, 0, Vsystem, 0);

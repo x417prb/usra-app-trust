@@ -1,35 +1,29 @@
 import React, { useState } from "react";
-import { modules, ProjectNeed } from "./state/State";
-import { List } from "immutable";
-
-const PSI = 1;
-
-function calculatePc(Et: number, Eb: number, Kloss: number, Htilt: number) {
-  const denomintor = (Eb * Kloss * Htilt);
-  return denomintor !== 0 ? (Et / denomintor) * PSI : NaN;
-}
+import { Project } from "./state/State";
+import { modules } from "./state/reducer";
+import { ProjectValueName } from "./state/actions";
 
 export default function DimFieldsPV({
-  needs, El
+  project, setValue
 }: {
-  El: number;
-  needs: List<ProjectNeed>;
+  project: Project,
+  setValue(name: ProjectValueName, value: number): void;
 }) {
 
-  const [moduleIndex, setModuleIndex] = useState(-1);
-  const [Vsys, setVsys] = useState(0);
+  const index = project.module;
+  const module = index === -1 ? null : modules[index];
 
-  const module = moduleIndex === -1 ? null : modules[moduleIndex];
+  const El = project.El;
+  const Vsystem = project.Vsystem;
+  const Htilt = project.Htilt;
+  const Kloss = project.Kloss;
+  const Ƞb = project.Ƞb;
 
-  const [Htilt, setHtilt] = useState(0);
-  const [Kloss, setKloss] = useState(0);
-  const [Ƞb, setȠB] = useState(0);
+  const Pc = project.Pc;
 
-  const Pc = calculatePc(El, Ƞb, Kloss, Htilt);
-
-  const nMS = module ? Math.ceil(Vsys / module.Vmp) : NaN;
-  const nMP = module && nMS !== 0 ? Math.ceil(Pc / (nMS * module.Pm)) : NaN;
-  const nTotal = nMP * nMS;
+  const Msc = project.Msc;
+  const Mpc = project.Mpc;
+  const Mt = project.Mt;
 
   return <>
   <div className="mb-3 row">
@@ -50,7 +44,7 @@ export default function DimFieldsPV({
     <div className="col-sm-4">
       <input
         type="number" min={0}
-        value={Htilt.toFixed(2)} onChange={e => setHtilt(e.target.valueAsNumber)}
+        value={Htilt.toFixed(2)} onChange={e => setValue("Htilt", e.target.valueAsNumber)}
         className="form-control form-control-sm"
       />
     </div>
@@ -60,7 +54,7 @@ export default function DimFieldsPV({
       <div className="col-sm-4">
         <input
           type="number" min={0}
-          value={Kloss.toFixed(2)} onChange={e => setKloss(e.target.valueAsNumber)}
+          value={Kloss.toFixed(2)} onChange={e => setValue("Kloss", e.target.valueAsNumber)}
           className="form-control form-control-sm"
         />
       </div>
@@ -70,7 +64,7 @@ export default function DimFieldsPV({
       <div className="col-sm-4">
         <input
           type="number" min={0}
-          value={Ƞb.toFixed(2)} onChange={e => setȠB(e.target.valueAsNumber)}
+          value={Ƞb.toFixed(2)} onChange={e => setValue("Ƞb", e.target.valueAsNumber)}
           className="form-control form-control-sm"
         />
       </div>
@@ -93,8 +87,8 @@ export default function DimFieldsPV({
       <div className="col-sm-4">
         <select
           className="form-select form-select-sm"
-          value={moduleIndex}
-          onChange={e => setModuleIndex(parseInt(e.target.value, 10))}>
+          value={index}
+          onChange={e => setValue("module", parseInt(e.target.value, 10))}>
           <option value={-1}>Selectionner un module</option>
           { modules.map((module, index) => {
             return <option key={index} value={index}>{module.name}</option>
@@ -160,7 +154,8 @@ export default function DimFieldsPV({
         <div className="input-group mb-3">
           <input
             type="number" min={0}
-            value={Vsys.toFixed(2)} onChange={e => setVsys(e.target.valueAsNumber)}
+            value={Vsystem.toFixed(2)}
+            onChange={e => setValue("Vsystem", e.target.valueAsNumber)}
             className="form-control form-control-sm" />
           <span className="input-group-text" title="Volt">V</span>
         </div>
@@ -169,19 +164,19 @@ export default function DimFieldsPV({
     <div className="mb-3 row">
       <label className="offset-sm-2 col-sm-3 col-form-label">Module en serie:</label>
       <div className="col-sm-4">
-        <input type="text" className="form-control form-control-sm" readOnly value={isFinite(nMS) ? nMS.toFixed(2) : "N/A"} />
+        <input type="text" className="form-control form-control-sm" readOnly value={isFinite(Msc) ? Msc.toFixed(2) : "N/A"} />
       </div>
     </div>
     <div className="mb-3 row">
       <label className="offset-sm-2 col-sm-3 col-form-label">Module en parallel:</label>
       <div className="col-sm-4">
-        <input type="text" className="form-control form-control-sm" readOnly value={isFinite(nMP) ? nMP.toFixed(2) : "N/A"} />
+        <input type="text" className="form-control form-control-sm" readOnly value={isFinite(Mpc) ? Mpc.toFixed(2) : "N/A"} />
       </div>
     </div>
     <div className="mb-3 row">
       <label className="offset-sm-2 col-sm-3 col-form-label">Nb totale de module:</label>
       <div className="col-sm-4">
-        <input type="text" className="form-control form-control-sm" readOnly value={isFinite(nTotal) ? nTotal.toFixed(2) : "N/A"} />
+        <input type="text" className="form-control form-control-sm" readOnly value={isFinite(Mt) ? Mt.toFixed(2) : "N/A"} />
       </div>
     </div>
   </>;

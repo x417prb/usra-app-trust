@@ -1,4 +1,7 @@
-import State, { Project, ProjectNeed, mutateCalcProjectNeed } from "./State";
+import State, {
+  Project, ProjectNeed,
+  PVModuleData
+} from "./State";
 import Actions from "./actions";
 import { List } from "immutable";
 
@@ -42,6 +45,11 @@ const initial: State = saved ? decode(JSON.parse(saved)) : {
   ])
 };
 
+export function mutateCalcProjectNeed(n: ProjectNeed) {
+  n.energy = n.hours * (n.prolifiratedPower = n.quantity * n.power);
+  return n;
+}
+
 function reduceProjectNeedsTotalEnergy(total: number, need: ProjectNeed) {
   return total + need.energy;
 }
@@ -54,8 +62,64 @@ let projectID = initial.projects.reduce((maximum, project) => {
   return Math.max(maximum, project.id + 1);
 }, 0);
 
+const PSI = 1;
+
+function calculatePc(Et: number, Eb: number, Kloss: number, Htilt: number) {
+  return (Et / (Eb * Kloss * Htilt)) * PSI;
+}
+
+export const modules: PVModuleData[] = [{
+  name: "SUNTECH 280Wc",
+  Pm: 260,
+  Voc: 38.2,
+  Isc: 8.90,
+  Vmp: 30.7,
+  Imp: 8.47,
+  output: 0.1598,
+  temperture: [-40, +85],
+  type: "Polycristalline"
+}, {
+  name: "TESLA POWER",
+  Pm: 280,
+  Voc: 38.2,
+  Isc: 9.38,
+  Vmp: 31.6,
+  Imp: 8.86,
+  output: 0.1710,
+  temperture: [-40, +85],
+  type: "Polycristalline"
+}];
+
 function reducer(state = initial, action: Actions): State {
   switch (action.type) {
+    case "project:set": {
+      const { id, name, value } = action.payload;
+
+      const project = {
+        ...state.projects.get(id)!,
+        [name]: value
+      } as Project;
+
+      const Vsystem = project.Vsystem;
+
+      const Pc = project.Pc = calculatePc(
+        project.El, project.Ƞb,
+        project.Kloss, project.Htilt
+      );
+
+      const module = project.module;
+
+      const PV = module === -1 ? null : modules[module];
+    
+      const Msc = project.Msc = PV ? Math.ceil(Vsystem / PV.Vmp) : NaN;
+      const Mpc = project.Mpc = PV && Msc !== 0 ? Math.ceil(Pc / (Msc * PV.Pm)) : NaN;
+      project.Mt = Mpc * Msc;
+
+      return {
+        ...state,
+        projects: state.projects.set(id, project)
+      };
+    }
     case "project.needs:set": {
       const { id, needs } = action.payload;
       const projet = state.projects.get(id)!;
@@ -113,6 +177,7 @@ function reducer(state = initial, action: Actions): State {
   }
 }
 
+/*
 function encode(state: State): StateJSON {
   return {
     projects: state.projects.map(project => ({
@@ -121,6 +186,7 @@ function encode(state: State): StateJSON {
     } as ProjectJSON)).toArray()
   };
 }
+*/
 
 function decode(state: StateJSON): State {
   return {
@@ -133,6 +199,6 @@ function decode(state: StateJSON): State {
 
 export default function (state = initial, action: Actions) {
   const next = reducer(state, action);
-  localStorage.setItem("state", JSON.stringify(encode(next)));
+  // localStorage.setItem("state", JSON.stringify(encode(next)));
   return next;
 };

@@ -7,7 +7,8 @@ type Actions = (
   CreateProject |
   EditProject   |
   DeleteProject |
-  SetProjectNeeds
+  SetProjectNeeds |
+  SetProjectValue
 );
 
 export type CreateProject = Action<{
@@ -30,6 +31,12 @@ export type SetProjectNeeds = Action<{
   needs: List<ProjectNeed>;
 }, "project.needs:set">;
 
+export type SetProjectValue = Action<{
+  id: number;
+  name: ProjectValueName;
+  value: number;
+}, "project:set">;
+
 export function setProjectNeeds(id: number, needs: List<ProjectNeed>): SetProjectNeeds {
   return { type: "project.needs:set", payload: { id, needs } };
 }
@@ -44,6 +51,18 @@ export function editProject(id: number, name: string, site: string): EditProject
 
 export function deleteProject(id: number): DeleteProject {
   return { type: "project:delete", payload: { id } };
+}
+
+export type ProjectValueName = (
+  "Htilt" |
+  "Kloss" |
+  "Ƞb" |
+  "module" |
+  "Vsystem"
+);
+
+export function setProjectValue(id: number, name: ProjectValueName, value: number): SetProjectValue {
+  return { type: "project:set", payload: { id, name, value } };
 }
 
 export default Actions;

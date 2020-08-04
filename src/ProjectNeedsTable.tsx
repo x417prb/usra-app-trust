@@ -1,6 +1,7 @@
 import React from "react";
 
-import { ProjectNeed, mutateCalcProjectNeed } from "./state/State";
+import { ProjectNeed } from "./state/State";
+import { mutateCalcProjectNeed } from "./state/reducer";
 import { List } from "immutable";
 import { selectFiles } from "./utils/files";
 import { parseCSV } from "./utils/csv";

@@ -4,7 +4,7 @@ import ProjectNeedsTable from "./ProjectNeedsTable";
 import State, { Project } from "./state/State";
 
 import { connect } from "react-redux";
-import { setProjectNeeds } from "./state/actions";
+import { setProjectNeeds, setProjectValue } from "./state/actions";
 
 import DimFieldsPV from "./DimFieldsPV";
 import DimFieldsB from "./DimFieldsB";
@@ -17,12 +17,15 @@ export default connect((state: State, { current }: { current: number }) => {
   };
 }, {
   setNeeds: setProjectNeeds,
+  setValue: setProjectValue
 })(function ProjectContent({
   project,
   setNeeds,
+  setValue
 }: {
   project?: Project;
   setNeeds: typeof setProjectNeeds;
+  setValue: typeof setProjectValue;
 }) {
   return project ? <>
     <ul className="nav nav-tabs">
@@ -46,14 +49,15 @@ export default connect((state: State, { current }: { current: number }) => {
       </div>
       <div className="tab-pane py-4 fade" id="dim-pv">
         <DimFieldsPV
-          needs={project.needs}
-          El={project.El}
+          project={project}
+          setValue={(name, value) => setValue(project.id, name, value)}
         />
       </div>
       <div className="tab-pane py-4 fade" id="dim-bat">
         <DimFieldsB
           Vsystem={project.Vsystem}
           El={project.El}
+          setValue={(name, value) => setValue(project.id, name, value)}
         />
       </div>
     </div>
