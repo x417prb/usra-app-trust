@@ -22,11 +22,11 @@ export default function DimFieldsPV({ needs }: { needs: List<ProjectNeed> }) {
 
   const [Htilt, setHtilt] = useState(0);
   const [Kloss, setKloss] = useState(0);
-  const [Eb, setEB] = useState(0);
+  const [Ƞb, setȠB] = useState(0);
 
   const El = needs.reduce(reduceProjectNeedsTotalEnergy, 0);
 
-  const Pc = calculatePc(El, Eb, Kloss, Htilt);
+  const Pc = calculatePc(El, Ƞb, Kloss, Htilt);
 
   const nMS = module ? Math.ceil(Vsys / module.Vmp) : NaN;
   const nMP = module && nMS !== 0 ? Math.ceil(Pc / (nMS * module.Pm)) : NaN;
@@ -71,7 +71,7 @@ export default function DimFieldsPV({ needs }: { needs: List<ProjectNeed> }) {
       <div className="col-sm-4">
         <input
           type="number" min={0}
-          value={Eb.toFixed(2)} onChange={e => setEB(e.target.valueAsNumber)}
+          value={Ƞb.toFixed(2)} onChange={e => setȠB(e.target.valueAsNumber)}
           className="form-control form-control-sm"
         />
       </div>
