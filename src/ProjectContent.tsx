@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import { setProjectNeeds } from "./state/actions";
 
 import DimFieldsPV from "./DimFieldsPV";
+import DimFieldsB from "./DimFieldsB";
 
 export default connect((state: State, { current }: { current: number }) => {
   return {
@@ -31,6 +32,9 @@ export default connect((state: State, { current }: { current: number }) => {
       <li className="nav-item">
         <a className="nav-link" data-toggle="tab" href="#dim-pv">Dimensionement PV</a>
       </li>
+      <li className="nav-item">
+        <a className="nav-link" data-toggle="tab" href="#dim-bat">Dimensionement Batteries</a>
+      </li>
     </ul>
     <div className="tab-content">
       <div className="tab-pane py-4 fade show active" id="needs">
@@ -42,6 +46,9 @@ export default connect((state: State, { current }: { current: number }) => {
       </div>
       <div className="tab-pane py-4 fade" id="dim-pv">
         <DimFieldsPV needs={project.needs} />
+      </div>
+      <div className="tab-pane py-4 fade" id="dim-bat">
+        <DimFieldsB Vsystem={0} El={0} />
       </div>
     </div>
   </> : <>

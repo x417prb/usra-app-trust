@@ -38,7 +38,7 @@ export default function DimFieldsPV({ needs }: { needs: List<ProjectNeed> }) {
     <div className="col-sm-4">
       <div className="input-group">
         <input
-          type="number"
+          type="text"
           value={El.toFixed(2)} readOnly
           className="form-control form-control-sm"
         />
@@ -77,24 +77,12 @@ export default function DimFieldsPV({ needs }: { needs: List<ProjectNeed> }) {
       </div>
     </div>
     <hr />
-    {/* <div className="mb-1 row">
-      <label className="offset-sm-2 col-sm-3 col-form-label">Orientation oprimal:</label>
-      <div className="col-sm-4">
-        <input type="number" min="0" max="360" defaultValue="0" className="form-control form-control-sm" />
-      </div>
-    </div>
-    <div className="mb-3 row">
-      <label className="offset-sm-2 col-sm-3 col-form-label">Inclinaison oprimal:</label>
-      <div className="col-sm-4">
-        <input type="number" min="0" max="90" defaultValue="0" className="form-control form-control-sm" />
-      </div>
-    </div> */}
     <div className="mb-1 row">
       <label className="offset-sm-2 col-sm-3 col-form-label">Puissance à installer:</label>
       <div className="col-sm-4">
         <div className="input-group mb-3">
           <input
-            type="number"
+            type="text"
             value={isNaN(Pc) ? "N/A" : Pc.toFixed(2)} readOnly
             className="form-control form-control-sm" />
           <span className="input-group-text" title="KiloWatt">Kw</span>
