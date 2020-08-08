@@ -8,6 +8,7 @@ import { setProjectNeeds, setProjectValue } from "./state/actions";
 
 import DimFieldsPV from "./DimFieldsPV";
 import DimFieldsB from "./DimFieldsB";
+import DimFieldsI from "./DimFieldsI";
 
 export default connect((state: State, { current }: { current: number }) => {
   return {
@@ -38,6 +39,9 @@ export default connect((state: State, { current }: { current: number }) => {
       <li className="nav-item">
         <a className="nav-link" data-toggle="tab" href="#dim-bat">Dimensionement Batteries</a>
       </li>
+      <li className="nav-item">
+        <a className="nav-link" data-toggle="tab" href="#dim-ond">Dimensionement Onduleurs</a>
+      </li>
     </ul>
     <div className="tab-content">
       <div className="tab-pane py-4 fade show active" id="needs">
@@ -59,12 +63,18 @@ export default connect((state: State, { current }: { current: number }) => {
           setValue={(name, value) => setValue(project.id, name, value)}
         />
       </div>
-    </div>
-  </> : <>
-    <div className="card">
-      <div className="card-body text-center text-muted">
-        Selectionner un projet de la liste.
+      <div className="tab-pane py-4 fade" id="dim-ond">
+        <DimFieldsI
+          project={project}
+          setValue={(name, value) => setValue(project.id, name, value)}
+        />
       </div>
     </div>
-  </>;
+  </> : <>
+      <div className="card">
+        <div className="card-body text-center text-muted">
+          Selectionner un projet de la liste.
+      </div>
+      </div>
+    </>;
 });

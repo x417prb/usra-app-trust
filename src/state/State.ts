@@ -38,6 +38,10 @@ export interface Project {
   Ƞout: number;
   Cx: number;
 
+  Bpc: number;
+  Bsc: number;
+  Bt: number;
+
 }
 
 export default interface State {
@@ -62,4 +66,7 @@ export interface BatteryModuleData {
   Vnom: number;
   Cnom: number;
   R: number;
+}
+
+export interface InverterModuleData {
 }

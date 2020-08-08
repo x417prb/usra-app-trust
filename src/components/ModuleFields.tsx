@@ -59,11 +59,11 @@ function ModuleRecord({
         {
           second
             ? <div className="col-sm-6">
-                <div className="d-flex">
-                  <div className="flex-fill">{renderLabel(second.name)}:</div>
-                  <div className="flex-fill">{module[second.name]}</div>
-                </div>
+              <div className="d-flex">
+                <div className="flex-fill">{renderLabel(second.label)}:</div>
+                <div className="flex-fill">{module[second.name]}</div>
               </div>
+            </div>
             : null
         }
       </div>;
@@ -72,7 +72,7 @@ function ModuleRecord({
 }
 
 export default function ModuleFields({
-  module, labels: labels
+  module, labels
 }: {
   module?: Record<string, number | string> | null,
   labels: Record<string, Label>

@@ -5,7 +5,7 @@ export type Action<T, K extends string> = { type: K; payload: T; };
 
 type Actions = (
   CreateProject |
-  EditProject   |
+  EditProject |
   DeleteProject |
   SetProjectNeeds |
   SetProjectValue
@@ -59,7 +59,10 @@ export type ProjectValueName = (
   "Ƞb" |
   "module" |
   "battery" |
-  "Vsystem"
+  "Vsystem" |
+  "Nc" |
+  "DODmax" |
+  "Ƞout"
 );
 
 export function setProjectValue(id: number, name: ProjectValueName, value: number): SetProjectValue {

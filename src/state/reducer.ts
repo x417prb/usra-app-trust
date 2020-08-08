@@ -44,9 +44,12 @@ const initial: State = saved ? decode(JSON.parse(saved)) : {
       battery: -1,
       Ƞb: 0,
       Nc: 0,
-      DODmax: 0,
-      Ƞout: 0,
+      DODmax: 0.01,
+      Ƞout: 0.01,
       Cx: 0,
+      Bpc: 0,
+      Bsc: 0,
+      Bt: 0,
     },
   ])
 };
@@ -135,15 +138,23 @@ function reducer(state = initial, action: Actions): State {
 
       const PV = module === -1 ? null : PVModules[module];
 
-      const Msc = project.Msc = PV ? Math.ceil(Vsystem / PV.Vmp) : NaN;
-      const Mpc = project.Mpc = PV && Msc !== 0 ? Math.ceil(Pc / (Msc * PV.Pm)) : NaN;
+      const Msc = project.Msc = (PV ? Math.ceil(Vsystem / PV.Vmp) : NaN);
+      const Mpc = project.Mpc = (PV && Msc !== 0 ? Math.ceil(Pc / (Msc * PV.Pm)) : NaN);
       project.Mt = Mpc * Msc;
 
       const Nc = project.Nc;
       const DODmax = project.DODmax;
       const Ƞout = project.Ƞout;
 
-      project.Cx = calculateCx(Nc, project.El, DODmax, Vsystem, Ƞout);
+      const battery = project.battery;
+
+      const B = battery === -1 ? null : BatteryModules[battery];
+
+      const Cx = project.Cx = calculateCx(Nc, project.El, DODmax, Vsystem, Ƞout);
+
+      const Bt = project.Bt = (B ? Math.ceil(Cx / B.Cnom) : NaN);
+      const Bsc = project.Bsc = (B ? Math.ceil(Vsystem / B.Vnom) : NaN);
+      project.Bpc = Math.floor(Bt / Bsc);
 
       return {
         ...state,
@@ -202,9 +213,12 @@ function reducer(state = initial, action: Actions): State {
           battery: -1,
           Ƞb: 0,
           Nc: 0,
-          DODmax: 0,
-          Ƞout: 0,
+          DODmax: 0.01,
+          Ƞout: 0.01,
           Cx: 0,
+          Bpc: 0,
+          Bsc: 0,
+          Bt: 0,
         })
       };
     };

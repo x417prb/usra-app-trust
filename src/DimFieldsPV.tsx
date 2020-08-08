@@ -86,17 +86,18 @@ export default function DimFieldsPV({
       labels={labels}
     />
     <UnitField
-      value={Vsystem.toFixed(2)} unit="V"
+      value={Vsystem} unit="V"
+      min={0} max={48} step={12}
       field={() => <>V<sub>système</sub></>}
       setValue={value => setValue("Vsystem", value)}
     />
     <ReadonlyField
-      label="Modules en parallel"
-      value={isFinite(Mpc) ? Mpc.toFixed(2) : "N/A"}
-    />
-    <ReadonlyField
       label="Modules en serie"
       value={isFinite(Msc) ? Msc.toFixed(2) : "N/A"}
+    />
+    <ReadonlyField
+      label="Modules en parallel"
+      value={isFinite(Mpc) ? Mpc.toFixed(2) : "N/A"}
     />
     <ReadonlyField
       label="Nombre de modules total"
