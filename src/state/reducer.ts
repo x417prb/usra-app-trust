@@ -18,48 +18,9 @@ type StateJSON = Omit<State, 'projects'> & {
   projects: ProjectJSON[]
 };
 
-const saved = undefined; // localStorage.getItem("state");
+const saved = localStorage.getItem("state");
 const initial: State = saved ? decode(JSON.parse(saved)) : {
-  projects: List([
-    {
-      id: 0,
-      name: "Example",
-      site: "Example site",
-      needs: List<ProjectNeed>([{
-        name: "Example",
-        power: 1,
-        hours: 1,
-        quantity: 48,
-        prolifiratedPower: 48,
-        energy: 48,
-        selected: false,
-      }]),
-      El: 48,
-      Pf: 48,
-      Htilt: 0,
-      Kloss: 0,
-      Mpc: 0,
-      Msc: 0,
-      Mt: 0,
-      Pc: 0,
-      Vsystem: 0,
-      module: -1,
-      battery: -1,
-      inverter: -1,
-      regulator: -1,
-      Ƞb: 0,
-      Nc: 0,
-      DODmax: 0.01,
-      Ƞout: 0.01,
-      Cx: 0,
-      Bpc: 0,
-      Bsc: 0,
-      Bt: 0,
-      Pi: 0,
-      Irated: 0,
-      Rc: 0,
-    },
-  ])
+  projects: List()
 };
 
 export function mutateCalcProjectNeed(n: ProjectNeed) {
@@ -147,6 +108,82 @@ export const RegulatorModels: RegulatorModelData[] = [{
   Vout: 24
 }];
 
+// Ω
+
+export const ρ = 1.724e-8;
+
+export function calcS(I: number, L: number, Vd: number) {
+  return 2e6 * ((ρ * I * L) / Vd);
+}
+
+export function calcVd(V: number) {
+  return 0.04 * V;
+}
+
+export function calcVdmr(Voc: number, Msc: number) {
+  return calcVd(Voc * Msc * 1.15);
+}
+
+export function calcIbi(Pi: number, Ƞ: number, Vsystem: number) {
+  return 1000 * Pi / (Ƞ * Vsystem);
+}
+
+const SQRT3 = Math.sqrt(3);
+const VLOAD = 220;
+
+export function calcIic(Pi: number) {
+  return Pi / (VLOAD * SQRT3);
+}
+
+export const Vdic = calcVd(VLOAD);
+
+function mutateUpdateProject(project: Project) {
+
+
+
+  const Vsystem = project.Vsystem;
+
+  const Pc = project.Pc = calculatePc(
+    project.El, project.Ƞb,
+    project.Kloss, project.Htilt
+  );
+
+  const module = project.module;
+
+  const PV = module === -1 ? null : PVModules[module];
+  const Isc = PV ? PV.Isc : NaN;
+
+  const Msc = project.Msc = (PV ? Math.ceil(Vsystem / PV.Vmp) : NaN);
+  const Mpc = project.Mpc = (PV && Msc !== 0 ? Math.ceil(Pc / (Msc * PV.Pm)) : NaN);
+  project.Mt = Mpc * Msc;
+
+  const Nc = project.Nc;
+  const DODmax = project.DODmax;
+  const Ƞout = project.Ƞout;
+
+  const battery = project.battery;
+
+  const B = battery === -1 ? null : BatteryModules[battery];
+
+  const Cx = project.Cx = calculateCx(Nc, project.El, DODmax, Vsystem, Ƞout);
+
+  const Bt = project.Bt = (B ? Math.ceil(Cx / B.Cnom) : NaN);
+  const Bsc = project.Bsc = (B ? Math.ceil(Vsystem / B.Vnom) : NaN);
+  project.Bpc = Math.floor(Bt / Bsc);
+
+  project.Pi = project.Pf * 1.25;
+
+  const Irated = project.Irated = Isc * Mpc * 1.25;
+  const regulator = project.regulator;
+
+  const R = regulator === -1 ? null : RegulatorModels[regulator];
+
+  project.Rc = Math.ceil(Irated / (R?.I ?? NaN));
+
+  return project;
+
+}
+
 function reducer(state = initial, action: Actions): State {
   switch (action.type) {
     case "project:set": {
@@ -157,49 +194,13 @@ function reducer(state = initial, action: Actions): State {
         [name]: value
       } as Project;
 
-      const Vsystem = project.Vsystem;
-
-      const Pc = project.Pc = calculatePc(
-        project.El, project.Ƞb,
-        project.Kloss, project.Htilt
-      );
-
-      const module = project.module;
-
-      const PV = module === -1 ? null : PVModules[module];
-      const Isc = PV ? PV.Isc : NaN;
-
-      const Msc = project.Msc = (PV ? Math.ceil(Vsystem / PV.Vmp) : NaN);
-      const Mpc = project.Mpc = (PV && Msc !== 0 ? Math.ceil(Pc / (Msc * PV.Pm)) : NaN);
-      project.Mt = Mpc * Msc;
-
-      const Nc = project.Nc;
-      const DODmax = project.DODmax;
-      const Ƞout = project.Ƞout;
-
-      const battery = project.battery;
-
-      const B = battery === -1 ? null : BatteryModules[battery];
-
-      const Cx = project.Cx = calculateCx(Nc, project.El, DODmax, Vsystem, Ƞout);
-
-      const Bt = project.Bt = (B ? Math.ceil(Cx / B.Cnom) : NaN);
-      const Bsc = project.Bsc = (B ? Math.ceil(Vsystem / B.Vnom) : NaN);
-      project.Bpc = Math.floor(Bt / Bsc);
-
-      project.Pi = project.Pf * 1.25;
-
-      const Irated = project.Irated = Isc * Mpc * 1.25;
-      const regulator = project.regulator;
-
-      const R = regulator === -1 ? null : RegulatorModels[regulator];
-
-      project.Rc = Math.ceil(Irated / (R?.I ?? NaN));
-
       return {
         ...state,
-        projects: state.projects.set(id, project)
+        projects: state.projects.set(id,
+          mutateUpdateProject(project)
+        )
       };
+
     }
     case "project.needs:set": {
       const { id, needs } = action.payload;
@@ -207,12 +208,12 @@ function reducer(state = initial, action: Actions): State {
       const $needs = needs.map(need => mutateCalcProjectNeed({ ...need }));
       return {
         ...state,
-        projects: state.projects.set(id, {
+        projects: state.projects.set(id, mutateUpdateProject({
           ...projet,
           needs: $needs,
           El: calculateTotalEnergy($needs),
           Pf: calculateProlifiratedPower($needs),
-        } as Project)
+        } as Project))
       };
     }
     case "project:delete": {
@@ -273,7 +274,6 @@ function reducer(state = initial, action: Actions): State {
   }
 }
 
-/*
 function encode(state: State): StateJSON {
   return {
     projects: state.projects.map(project => ({
@@ -282,7 +282,6 @@ function encode(state: State): StateJSON {
     } as ProjectJSON)).toArray()
   };
 }
-*/
 
 function decode(state: StateJSON): State {
   return {
@@ -295,6 +294,6 @@ function decode(state: StateJSON): State {
 
 export default function (state = initial, action: Actions) {
   const next = reducer(state, action);
-  // localStorage.setItem("state", JSON.stringify(encode(next)));
+  localStorage.setItem("state", JSON.stringify(encode(next)));
   return next;
 };

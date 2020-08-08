@@ -20,10 +20,10 @@ export default function AppHeader() {
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav mr-auto mb-2 mb-lg-0">
           <li className="nav-item">
-            <a className={navlinkClassExact(path, "/")} href="/">Home</a>
+            <Link className={navlinkClassExact(path, "/")} to="/">Home</Link>
           </li>
           <li className="nav-item">
-            <a className={navlinkClass(path, "/project")} href="/project">Projects</a>
+            <Link className={navlinkClass(path, "/project")} to="/project">Projects</Link>
           </li>
         </ul>
       </div>

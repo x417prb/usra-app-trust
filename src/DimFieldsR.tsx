@@ -22,6 +22,7 @@ export default function DimFieldsR({
 }) {
   const index = project.regulator;
   const regulator = index === -1 ? null : RegulatorModels[index];
+  const Rc = project.Rc;
   return <>
     <ReadonlyUnitField
       value={project.Irated.toFixed(2)} unit="A"
@@ -42,7 +43,7 @@ export default function DimFieldsR({
       } : null}
     />
     <ReadonlyField
-      value={project.Rc}
+      value={isFinite(Rc) ? Rc : "N/A"}
       label="Nombre de regulateur"
     />
   </>;
