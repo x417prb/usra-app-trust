@@ -13,7 +13,7 @@ const labels: Record<keyof BatteryModuleData, string> = {
   vendor: "Marque",
   Vnom: "Tension norminale",
   Cnom: "Capacite nominale",
-  R: "Rendement"
+  Ƞ: "Rendement"
 };
 
 export default function DimFieldsB({
@@ -75,7 +75,7 @@ export default function DimFieldsB({
         vendor: battery.vendor,
         Vnom: `${battery.Vnom} V`,
         Cnom: `${battery.Cnom} Ah`,
-        R: `${(battery.R * 100).toFixed(2)}%`,
+        R: `${(battery.Ƞ * 100).toFixed(2)}%`,
       } : null}
     />
     <ReadonlyField

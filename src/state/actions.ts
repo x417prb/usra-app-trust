@@ -59,6 +59,8 @@ export type ProjectValueName = (
   "Ƞb" |
   "module" |
   "battery" |
+  "inverter" |
+  "regulator" |
   "Vsystem" |
   "Nc" |
   "DODmax" |

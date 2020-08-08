@@ -1,7 +1,9 @@
 import State, {
   Project, ProjectNeed,
   PVModuleData,
-  BatteryModuleData
+  BatteryModuleData,
+  InverterModuleData,
+  RegulatorModelData
 } from "./State";
 import Actions from "./actions";
 import { List } from "immutable";
@@ -27,12 +29,13 @@ const initial: State = saved ? decode(JSON.parse(saved)) : {
         name: "Example",
         power: 1,
         hours: 1,
-        quantity: 1,
-        energy: 1,
-        prolifiratedPower: 1,
+        quantity: 48,
+        prolifiratedPower: 48,
+        energy: 48,
         selected: false,
       }]),
-      El: 1,
+      El: 48,
+      Pf: 48,
       Htilt: 0,
       Kloss: 0,
       Mpc: 0,
@@ -42,6 +45,8 @@ const initial: State = saved ? decode(JSON.parse(saved)) : {
       Vsystem: 0,
       module: -1,
       battery: -1,
+      inverter: -1,
+      regulator: -1,
       Ƞb: 0,
       Nc: 0,
       DODmax: 0.01,
@@ -50,6 +55,9 @@ const initial: State = saved ? decode(JSON.parse(saved)) : {
       Bpc: 0,
       Bsc: 0,
       Bt: 0,
+      Pi: 0,
+      Irated: 0,
+      Rc: 0,
     },
   ])
 };
@@ -63,8 +71,16 @@ function reduceProjectNeedsTotalEnergy(total: number, need: ProjectNeed) {
   return total + need.energy;
 }
 
+function reduceProjectNeedsProlifiratedPower(total: number, need: ProjectNeed) {
+  return total + need.energy;
+}
+
 function calculateTotalEnergy(needs: List<ProjectNeed>) {
   return needs.reduce(reduceProjectNeedsTotalEnergy, 0);
+}
+
+function calculateProlifiratedPower(needs: List<ProjectNeed>) {
+  return needs.reduce(reduceProjectNeedsProlifiratedPower, 0);
 }
 
 let projectID = initial.projects.reduce((maximum, project) => {
@@ -86,13 +102,13 @@ export const BatteryModules: BatteryModuleData[] = [{
   vendor: "Generic",
   Vnom: 12,
   Cnom: 160,
-  R: 0.98
+  Ƞ: 0.98
 }, {
   model: "12-CS-11PS",
   vendor: "Rolls",
   Vnom: 12,
   Cnom: 296,
-  R: 0.98
+  Ƞ: 0.98
 }];
 
 export const PVModules: PVModuleData[] = [{
@@ -117,6 +133,20 @@ export const PVModules: PVModuleData[] = [{
   type: "Polycristalline"
 }];
 
+export const InverterModules: InverterModuleData[] = [{
+  vendor: "Generic",
+  Pnom: 3,
+  PVmpp: [125, 440],
+  Vmax: 550,
+  Ƞ: 0.97
+}];
+
+export const RegulatorModels: RegulatorModelData[] = [{
+  name: "Xantex - 60A - 12V/24V",
+  I: 60,
+  Vout: 24
+}];
+
 function reducer(state = initial, action: Actions): State {
   switch (action.type) {
     case "project:set": {
@@ -137,6 +167,7 @@ function reducer(state = initial, action: Actions): State {
       const module = project.module;
 
       const PV = module === -1 ? null : PVModules[module];
+      const Isc = PV ? PV.Isc : NaN;
 
       const Msc = project.Msc = (PV ? Math.ceil(Vsystem / PV.Vmp) : NaN);
       const Mpc = project.Mpc = (PV && Msc !== 0 ? Math.ceil(Pc / (Msc * PV.Pm)) : NaN);
@@ -156,6 +187,15 @@ function reducer(state = initial, action: Actions): State {
       const Bsc = project.Bsc = (B ? Math.ceil(Vsystem / B.Vnom) : NaN);
       project.Bpc = Math.floor(Bt / Bsc);
 
+      project.Pi = project.Pf * 1.25;
+
+      const Irated = project.Irated = Isc * Mpc * 1.25;
+      const regulator = project.regulator;
+
+      const R = regulator === -1 ? null : RegulatorModels[regulator];
+
+      project.Rc = Math.ceil(Irated / (R?.I ?? NaN));
+
       return {
         ...state,
         projects: state.projects.set(id, project)
@@ -170,7 +210,8 @@ function reducer(state = initial, action: Actions): State {
         projects: state.projects.set(id, {
           ...projet,
           needs: $needs,
-          El: calculateTotalEnergy($needs)
+          El: calculateTotalEnergy($needs),
+          Pf: calculateProlifiratedPower($needs),
         } as Project)
       };
     }
@@ -202,6 +243,7 @@ function reducer(state = initial, action: Actions): State {
           name, site,
           needs: List(),
           El: 0,
+          Pf: 0,
           Htilt: 0,
           Kloss: 0,
           Mpc: 0,
@@ -211,6 +253,8 @@ function reducer(state = initial, action: Actions): State {
           Vsystem: 0,
           module: -1,
           battery: -1,
+          inverter: -1,
+          regulator: -1,
           Ƞb: 0,
           Nc: 0,
           DODmax: 0.01,
@@ -219,6 +263,9 @@ function reducer(state = initial, action: Actions): State {
           Bpc: 0,
           Bsc: 0,
           Bt: 0,
+          Pi: 0,
+          Irated: 0,
+          Rc: 0,
         })
       };
     };

@@ -4,11 +4,13 @@ export default function ReadonlyUnitField({
   label, value, unit
 }: {
   unit: string;
-  label: string;
+  label: string | (() => JSX.Element);
   value: string | number;
 }) {
   return <div className="mb-3 row">
-    <label className="offset-sm-2 col-sm-3 col-form-label">{label}:</label>
+    <label className="offset-sm-2 col-sm-3 col-form-label">{
+      typeof label === "string" ? label : label()
+    }:</label>
     <div className="col-sm-4">
       <div className="input-group">
         <input

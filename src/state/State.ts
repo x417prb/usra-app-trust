@@ -17,9 +17,12 @@ export interface Project {
 
   needs: List<ProjectNeed>;
   El: number;
+  Pf: number;
 
   module: number;
   battery: number;
+  inverter: number;
+  regulator: number;
 
   Htilt: number;
   Kloss: number;
@@ -41,6 +44,11 @@ export interface Project {
   Bpc: number;
   Bsc: number;
   Bt: number;
+
+  Pi: number;
+  Irated: number;
+
+  Rc: number;
 
 }
 
@@ -65,8 +73,19 @@ export interface BatteryModuleData {
   model: string;
   Vnom: number;
   Cnom: number;
-  R: number;
+  Ƞ: number;
 }
 
 export interface InverterModuleData {
+  vendor: string;
+  Pnom: number;
+  PVmpp: [number, number];
+  Vmax: number;
+  Ƞ: number;
+}
+
+export interface RegulatorModelData {
+  name: string;
+  Vout: number;
+  I: number;
 }
