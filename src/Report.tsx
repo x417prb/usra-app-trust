@@ -90,11 +90,11 @@ export default function Report({
       <p>La production energetique: {PVPuissanceProduite}</p>
       <p>Capacite de stockage: {BatCapacite}</p>
       <p className="ml-5">Satisfaction de besoin: Une bonne satisfaction</p>
-      <h5>Bilan de dimensionnement</h5>
       <figure className="border rounded-sm border-secondary text-center p-3">
         <img src={(process.env.PUBLIC_URL + "/diagram.svg").replace(/\/\//, "/")} alt="Schema de l'installation" />
         <figcaption className="figure-caption">Schema de l'installation.</figcaption>
       </figure>
+      <h5>Bilan de dimensionnement</h5>
       <div className="table-responsive">
         <table className="table table-bordered border border-secondary text-center align-middle">
           <thead>
