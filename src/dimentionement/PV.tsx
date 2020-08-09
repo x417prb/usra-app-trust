@@ -27,82 +27,69 @@ export default function DimPV({
   setValue(name: ProjectValueName, value: number): void;
 }) {
 
-  const index = project.module;
-  const module = index === -1 ? null : PVModels[index];
-
-  const El = project.El;
-  const Vsystem = project.Vsystem;
-  const Htilt = project.Htilt;
-  const Kloss = project.Kloss;
-  const Ƞb = project.Ƞb;
-
-  const Pc = n(project.Pc, 2);
-
-  const Msc = project.Msc;
-  const Mpc = project.Mpc;
-  const Mtc = project.Mt;
+  const PV = PVModels[project.module];
 
   return <>
     <ReadonlyUnitField
       label="Energy total"
-      value={El.toFixed(2)}
+      value={n(project.El, 2)}
       unit="Kwh/d"
     />
     <TextField
       field={() => <>H<sub>tilt</sub></>}
-      value={Htilt.toFixed(2)}
+      value={n(project.Htilt, 2)}
       setValue={value => setValue("Htilt", value)}
     />
     <TextField
       field={() => <>K<sub>loss</sub></>}
-      value={Kloss.toFixed(2)}
+      value={n(project.Kloss, 2)}
       setValue={value => setValue("Kloss", value)}
     />
     <TextField
       field="Efficacite d'equilibre"
-      value={Ƞb.toFixed(2)}
+      value={n(project.Ƞb, 2)}
       setValue={value => setValue("Ƞb", value)}
     />
     <hr />
     <ReadonlyUnitField
       label="Puissance à installer"
-      value={Pc}
+      value={n(project.Pc, 2)}
       unit="Kw"
     />
     <ChoiceBox
       label="Choix de module"
       items={PVModels}
-      value={index}
+      value={project.module}
       onChange={value => setValue("module", value)}
     />
     <ModuleFields
-      module={module ? {
-        type: module.type,
-        Pm: `${module.Pm} Kw`,
-        Voc: `${module.Voc} V`,
-        Isc: `${module.Isc} A`,
-        Vmp: `${module.Vmp} V`,
-        Imp: `${module.Imp} A`,
+      module={PV ? {
+        type: PV.type,
+        Pm: `${PV.Pm} Kw`,
+        Voc: `${PV.Voc} V`,
+        Isc: `${PV.Isc} A`,
+        Vmp: `${PV.Vmp} V`,
+        Imp: `${PV.Imp} A`,
       } : null}
       labels={labels}
     />
     <UnitField
-      value={Vsystem} unit="V"
+      value={n(project.Vsystem)} unit="V"
       min={0} max={48} step={12}
       field="Tension du system"
       setValue={value => setValue("Vsystem", value)}
     />
     <ReadonlyField
       label="Modules en serie"
-      value={n(Msc, 2)}
+      value={n(project.Msc, 2)}
     />
     <ReadonlyField
       label="Modules en parallel"
-      value={n(Mpc, 2)}
+      value={n(project.Mpc, 2)}
     />
     <ReadonlyField
       label="Nombre de modules total"
-      value={n(Mtc, 2)}
+      value={n(project.Mt, 2)}
     />
   </>;
 };
