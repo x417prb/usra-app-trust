@@ -1,19 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
-// function navlinkClass(path: string, start: string) {
-//   return `nav-link${path.startsWith(start) ? " active" : ""}`;
-// }
+const NAME = "Stern Sim";
 
-// function navlinkClassExact(path: string, start: string) {
-//   return `nav-link${path === start ? " active" : ""}`;
-// }
+function setTitle() {
+  document.title = NAME;
+}
 
 export default function AppHeader() {
-  // const path = useLocation().pathname;
+  useEffect(setTitle);
   return <nav className="navbar navbar-expand-lg navbar-dark bg-success d-print-none">
     <div className="container-md">
-      <Link to="/" className="navbar-brand">Sun Sim</Link>
+      <Link to="/" className="navbar-brand">{NAME}</Link>
     </div>
   </nav>;
 }
