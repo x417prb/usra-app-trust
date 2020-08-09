@@ -53,7 +53,7 @@ function ModuleRecord({
         <div className="col-sm-6">
           <div className="d-flex">
             <div className="flex-fill">{renderLabel(first.label)}:</div>
-            <div className="flex-fill">{module[first.name]}</div>
+            <div className="flex-fill text-right">{module[first.name]}</div>
           </div>
         </div>
         {
@@ -61,7 +61,7 @@ function ModuleRecord({
             ? <div className="col-sm-6">
               <div className="d-flex">
                 <div className="flex-fill">{renderLabel(second.label)}:</div>
-                <div className="flex-fill">{module[second.name]}</div>
+                <div className="flex-fill text-right">{module[second.name]}</div>
               </div>
             </div>
             : null
@@ -79,7 +79,7 @@ export default function ModuleFields({
 }) {
   return <div className="mb-3 row">
     <div className="offset-sm-1 col-sm-9">
-      <div className="card text-white bg-secondary">
+      <div className="card bg-light">
         <div className="card-body"> {
           module
             ? <ModuleRecord module={module} rows={getRows(labels)} />

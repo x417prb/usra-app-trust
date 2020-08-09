@@ -52,20 +52,20 @@ export default connect(
   const [projectID, setProjectID] = useState(-1);
 
   return <>
-    <div className="list-group list-group-flush mb-3">
+    <div className="list-group list-group-flush d-print-none mb-3">
       {
         projects.map(project => {
           return <Link
-            to={`/project/${project.id}`}
+            to={`/${project.id}`}
             className={
               `list-group-item list-group-item-action ${
               state !== ProjectListState.Normal
                 ? "disabled"
                 : ""
               } ${
-                current === project.id
-                  ? "active"
-                  : ""
+              current === project.id
+                ? "active list-group-item-success"
+                : ""
               }`
             }
             key={project.id}
@@ -73,7 +73,7 @@ export default connect(
             <div className="d-flex justify-content-between align-items-center">
               <h5>
                 {project.name}
-                <small className="font-weight-light" hidden={project.site === ""}>({project.site})</small>
+                <small className="font-weight-light" hidden={project.site === ""}> ({project.site})</small>
               </h5>
               <div className="btn-group btn-group-sm">
                 <button
@@ -81,7 +81,7 @@ export default connect(
                   className="btn"
                   hidden={state !== ProjectListState.Normal}
                   onClick={e => {
-                    if (!window.confirm("Voulez vous annuler la suppression du projet ?")) {
+                    if (window.confirm("Voulez vous vraiment supprimer le projet ?")) {
                       e.stopPropagation();
                       remove(project.id);
                       requestAnimationFrame(() => {
@@ -107,7 +107,7 @@ export default connect(
         })
       }
     </div>
-    <form>
+    <form className="d-print-none">
       <div hidden={state === ProjectListState.Normal}>
         <div className="row">
           <label className="col-4 col-form-label">
@@ -146,7 +146,7 @@ export default connect(
         >Annuler</button>
         <button
           type="submit"
-          className="btn btn-outline-primary btn-sm"
+          className="btn btn-outline-success btn-sm"
           onClick={e => {
             e.preventDefault();
             switch (state) {
@@ -171,7 +171,6 @@ export default connect(
         >{ButtonText[state]}</button>
       </div>
     </form>
-
   </>;
 
 });

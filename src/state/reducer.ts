@@ -1,9 +1,9 @@
 import State, {
   Project, ProjectNeed,
-  PVModuleData,
-  BatteryModuleData,
-  InverterModuleData,
-  RegulatorModelData
+  ModelPV,
+  ModelBattery,
+  ModelOnduleur,
+  ModelRegulateur
 } from "./State";
 import Actions from "./actions";
 import { List } from "immutable";
@@ -58,7 +58,7 @@ function calculateCx(Nc: number, El: number, DODmax: number, Vsystem: number, Ƞ
   return (Nc * El * 1000) / (DODmax * Vsystem * Ƞout);
 }
 
-export const BatteryModules: BatteryModuleData[] = [{
+export const BatteryModules: ModelBattery[] = [{
   model: "Solar 12V / 160 Ah",
   vendor: "Generic",
   Vnom: 12,
@@ -72,7 +72,7 @@ export const BatteryModules: BatteryModuleData[] = [{
   Ƞ: 0.98
 }];
 
-export const PVModules: PVModuleData[] = [{
+export const PVModels: ModelPV[] = [{
   name: "SUNTECH 280Wc",
   Pm: 260,
   Voc: 38.2,
@@ -94,7 +94,7 @@ export const PVModules: PVModuleData[] = [{
   type: "Polycristalline"
 }];
 
-export const InverterModules: InverterModuleData[] = [{
+export const InverterModules: ModelOnduleur[] = [{
   vendor: "Generic",
   Pnom: 3,
   PVmpp: [125, 440],
@@ -102,7 +102,7 @@ export const InverterModules: InverterModuleData[] = [{
   Ƞ: 0.97
 }];
 
-export const RegulatorModels: RegulatorModelData[] = [{
+export const RegulatorModels: ModelRegulateur[] = [{
   name: "Xantex - 60A - 12V/24V",
   I: 60,
   Vout: 24
@@ -150,7 +150,7 @@ function mutateUpdateProject(project: Project) {
 
   const module = project.module;
 
-  const PV = module === -1 ? null : PVModules[module];
+  const PV = module === -1 ? null : PVModels[module];
   const Isc = PV ? PV.Isc : NaN;
 
   const Msc = project.Msc = (PV ? Math.ceil(Vsystem / PV.Vmp) : NaN);
@@ -267,6 +267,15 @@ function reducer(state = initial, action: Actions): State {
           Pi: 0,
           Irated: 0,
           Rc: 0,
+          Lmr: 0,
+          Lbi: 0,
+          Lic: 0,
+          Idmr: 0,
+          Idbi: 0,
+          Idic: 0,
+          Sdmr: 0,
+          Sdbi: 0,
+          Sdic: 0,
         })
       };
     };

@@ -1,14 +1,15 @@
-import React, { useState } from "react";
-import { Project } from "./state/State";
-import { ProjectValueName } from "./state/actions";
+import React from "react";
+import { Project } from "../state/State";
+import { ProjectValueName } from "../state/actions";
 import {
   ρ, calcVd, calcVdmr,
-  calcS, PVModules, calcIbi,
+  calcS, PVModels, calcIbi,
   BatteryModules,
   InverterModules,
   calcIic,
   Vdic,
-} from "./state/reducer";
+} from "../state/reducer";
+import { n } from "../utils/numbers";
 
 function formatExponentialNumber(x: number) {
   const [F, e] = x.toExponential(2).split("e");
@@ -16,22 +17,22 @@ function formatExponentialNumber(x: number) {
   return <>{F}&times;10<sup>{E}</sup></>;
 }
 
-export default function DimFieldsC({
+export default function DimCables({
   project, setValue
 }: {
   project: Project;
   setValue(name: ProjectValueName, value: number): void;
 }) {
-  const [Lmr, setLMR] = useState(1);
-  const [Lbi, setLBI] = useState(1);
-  const [Lic, setLIC] = useState(1);
+  const Lmr = project.Lmr;
+  const Lbi = project.Lbi;
+  const Lic = project.Lic;
   const module = project.module;
-  const Voc = module === -1 ? NaN : PVModules[module].Voc;
+  const Voc = module === -1 ? NaN : PVModels[module].Voc;
   const battery = project.battery;
   const Ƞb = battery === -1 ? NaN : BatteryModules[battery].Ƞ;
   const Vsystem = project.Vsystem;
   const inverter = project.inverter;
-  const Pi = inverter == -1 ? NaN : InverterModules[inverter].Pnom;
+  const Pi = inverter === -1 ? NaN : InverterModules[inverter].Pnom;
   const Irated = project.Irated;
   const Vdmr = calcVdmr(Voc, project.Msc);
   const Smr = calcS(Irated, Lmr, Vdmr);
@@ -62,11 +63,11 @@ export default function DimFieldsC({
               min="0" step="0.01"
               className="form-control-plaintext"
               value={Lmr}
-              onChange={e => setLMR(e.target.valueAsNumber)}
+              onChange={e => setValue("Lmr", e.target.valueAsNumber)}
             /></td>
-            <td>{isFinite(Irated) ? Irated.toFixed(2) : "N/A"}</td>
-            <td>{isFinite(Vdmr) ? Vdmr.toFixed(2) : "N/A"}</td>
-            <td>{isFinite(Smr) ? Smr.toFixed(2) : "N/A"}</td>
+            <td>{n(Irated, 2)}</td>
+            <td>{n(Vdmr, 2)}</td>
+            <td>{n(Smr, 2)}</td>
           </tr>
           <tr>
             <th>Cables entre parc battries et l'oduleur</th>
@@ -76,11 +77,11 @@ export default function DimFieldsC({
               min="0" step="0.01"
               className="form-control-plaintext"
               value={Lbi}
-              onChange={e => setLBI(e.target.valueAsNumber)}
+              onChange={e => setValue("Lbi", e.target.valueAsNumber)}
             /></td>
-            <td>{isFinite(Ibi) ? Ibi.toFixed(2) : "N/A"}</td>
-            <td>{isFinite(Vdbi) ? Vdbi.toFixed(2) : "N/A"}</td>
-            <td>{isFinite(Sbi) ? Sbi.toFixed(2) : "N/A"}</td>
+            <td>{n(Ibi, 2)}</td>
+            <td>{n(Vdbi, 2)}</td>
+            <td>{n(Sbi, 2)}</td>
           </tr>
           <tr>
             <th>Cables entre L'onduleur et la charge</th>
@@ -90,11 +91,11 @@ export default function DimFieldsC({
               min="0" step="0.01"
               className="form-control-plaintext"
               value={Lic}
-              onChange={e => setLIC(e.target.valueAsNumber)}
+              onChange={e => setValue("Lic", e.target.valueAsNumber)}
             /></td>
-            <td>{isFinite(Iic) ? Iic.toFixed(2) : "N/A"}</td>
-            <td>{isFinite(Vdic) ? Vdic.toFixed(2) : "N/A"}</td>
-            <td>{isFinite(Sic) ? Sic.toFixed(2) : "N/A"}</td>
+            <td>{n(Iic, 2)}</td>
+            <td>{n(Vdic, 2)}</td>
+            <td>{n(Sic, 2)}</td>
           </tr>
         </tbody>
       </table>

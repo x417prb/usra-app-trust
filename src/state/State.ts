@@ -50,13 +50,25 @@ export interface Project {
 
   Rc: number;
 
+  Lmr: number;
+  Lbi: number;
+  Lic: number;
+
+  Idmr: number;
+  Idbi: number;
+  Idic: number;
+
+  Sdmr: number;
+  Sdbi: number;
+  Sdic: number;
+
 }
 
 export default interface State {
   projects: List<Project>;
 };
 
-export interface PVModuleData {
+export interface ModelPV {
   name: string;
   Pm: number;
   Voc: number;
@@ -68,7 +80,7 @@ export interface PVModuleData {
   type: string;
 }
 
-export interface BatteryModuleData {
+export interface ModelBattery {
   vendor: string;
   model: string;
   Vnom: number;
@@ -76,7 +88,7 @@ export interface BatteryModuleData {
   Ƞ: number;
 }
 
-export interface InverterModuleData {
+export interface ModelOnduleur {
   vendor: string;
   Pnom: number;
   PVmpp: [number, number];
@@ -84,7 +96,7 @@ export interface InverterModuleData {
   Ƞ: number;
 }
 
-export interface RegulatorModelData {
+export interface ModelRegulateur {
   name: string;
   Vout: number;
   I: number;

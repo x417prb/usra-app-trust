@@ -66,14 +66,14 @@ function isNeedUnselected(need: ProjectNeed) {
   return !need.selected;
 }
 
-function NeedsTable({
-  data, setData
+export default function Besoins({
+  current, needs, setNeeds
 }: {
-  data: List<ProjectNeed>;
-  setData(needs: List<ProjectNeed>): void;
+  current: number;
+  needs: List<ProjectNeed>;
+  setNeeds(id: number, needs: List<ProjectNeed>): void;
 }) {
-
-  const total = data.reduce(reduceProjectTotalNeed, {
+  const total = needs.reduce(reduceProjectTotalNeed, {
     name: "Total",
     energy: 0,
     hours: 0,
@@ -88,19 +88,19 @@ function NeedsTable({
       <table className="table table-sm table-hover align-middle table-needs">
         <thead>
           <tr>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td className="d-print-none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <th scope="col" title="Nom de l'equipement">Equipement</th>
-            <th scope="col" title="Nombre d'heurs d'uitilisation par jour">Utilisation (h/d)</th>
+            <th scope="col" title="Nombre d'heurs d'uitilisation par jour">Utilisation (h/j)</th>
             <th scope="col" title="Quantité d'equipement utilisé">Quantité</th>
             <th scope="col" title="Puissance de l'equipement en KiloWatt">Puissance (Kw)</th>
             <th scope="col" title="Puissance des equipements en KiloWatt">Puissance foisonée (Kw)</th>
-            <th scope="col" title="Energie consomée par les equipements en KiloWatt-heur par jour">Energie (Kwh/d)</th>
+            <th scope="col" title="Energie consomée par les equipements en KiloWatt-heur par jour">Energie (Kwh/j)</th>
           </tr>
         </thead>
         {
-          data.size >= 0 ? <>
+          needs.size >= 0 ? <>
             <tbody>{
-              data.map((need, index) => (
+              needs.map((need, index) => (
                 <tr
                   key={index}
                   tabIndex={-1}
@@ -111,40 +111,44 @@ function NeedsTable({
                   onClick={e => {
                     // @ts-ignore
                     if (e.target.tagName !== "TD") return;
-                    setData(toggleNeedSelected(data, index))
+                    setNeeds(current, toggleNeedSelected(needs, index))
                   }}
                 >
                   <td className="d-print-none">{
                     need.selected
-                      ? <span role="img" aria-label="Selectionné">✔️</span>
+                      ? <span role="img" aria-label="Selectionné" style={{
+                        userSelect: "none",
+                        pointerEvents: "none",
+                        touchAction: "none"
+                      }}>✔️</span>
                       : null
                   }</td>
                   <th><input
                     type="text"
                     className="form-control-plaintext"
                     value={need.name}
-                    onChange={e => setData(setNeedName(data, index, e.target.value))}
+                    onChange={e => setNeeds(current, setNeedName(needs, index, e.target.value))}
                   /></th>
                   <td><input
                     type="number"
                     min="1" max="24" step="0"
                     className="form-control-plaintext"
                     value={Math.round(need.hours)}
-                    onChange={e => setData(setNeedHours(data, index, e.target.valueAsNumber))}
+                    onChange={e => setNeeds(current, setNeedHours(needs, index, e.target.valueAsNumber))}
                   /></td>
                   <td><input
                     type="number"
                     min="0" step="1"
                     className="form-control-plaintext"
                     value={Math.round(need.quantity)}
-                    onChange={e => setData(setNeedQuantity(data, index, e.target.valueAsNumber))}
+                    onChange={e => setNeeds(current, setNeedQuantity(needs, index, e.target.valueAsNumber))}
                   /></td>
                   <td><input
                     type="number"
                     min="0" step="0.01"
                     className="form-control-plaintext"
                     value={need.power.toFixed(2)}
-                    onChange={e => setData(setNeedPower(data, index, e.target.valueAsNumber))}
+                    onChange={e => setNeeds(current, setNeedPower(needs, index, e.target.valueAsNumber))}
                   /></td>
                   <td>{need.prolifiratedPower.toFixed(2)}</td>
                   <td>{need.energy.toFixed(2)}</td>
@@ -165,12 +169,12 @@ function NeedsTable({
         }
       </table>
     </div>
-    <div className="d-flex flex-wrap justify-content-evenly mb-2">
+    <div className="d-flex d-print-none flex-wrap justify-content-evenly mb-2">
       <button
-        disabled={data.every(isNeedUnselected)}
-        onClick={e => {
-          if (!window.confirm("Voulez vous annuler la suppression des lignes ?")) {
-            setData(data.filter(isNeedUnselected));
+        disabled={needs.every(isNeedUnselected)}
+        onClick={() => {
+          if (window.confirm("Voulez vous vraiment supprimer les lignes ?")) {
+            setNeeds(current, needs.filter(isNeedUnselected));
           }
         }}
         type="button"
@@ -178,7 +182,7 @@ function NeedsTable({
         title="Supprimer la selection"
       >Supprimer</button>
       <button
-        onClick={async e => {
+        onClick={async () => {
           try {
             const file = await selectFiles({
               accept: '.csv',
@@ -193,7 +197,7 @@ function NeedsTable({
               power: Math.max(0, parseFloat(power)),
               selected: false
             } as ProjectNeed));
-            setData(data.push(...values));
+            setNeeds(current, needs.push(...values));
           } catch (e) {
             console.warn(e);
           }
@@ -202,25 +206,11 @@ function NeedsTable({
         className="btn btn-warning"
       >Importer</button>
       <button
-        onClick={e => setData(addNeed(data))}
+        onClick={() => setNeeds(current, addNeed(needs))}
         type="button"
         className="btn btn-success"
       >Ajouter</button>
     </div>
   </>;
 
-}
-
-export default function ProjectNeedsTable({
-  current, needs, setNeeds
-}: {
-  current: number;
-  needs: List<ProjectNeed>;
-  setNeeds(id: number, needs: List<ProjectNeed>): void;
-}) {
-  const data = needs;
-  return <NeedsTable
-    data={data}
-    setData={data => setNeeds(current, data)}
-  />;
 };

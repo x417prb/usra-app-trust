@@ -1,25 +1,26 @@
 import React from "react";
-import { Project } from "./state/State";
-import { PVModules } from "./state/reducer";
-import { ProjectValueName } from "./state/actions";
+import { Project } from "../state/State";
+import { PVModels } from "../state/reducer";
+import { ProjectValueName } from "../state/actions";
 
-import ReadonlyUnitField from "./components/ReadonlyUnitField";
-import ChoiceBox from "./components/ChoiceBox";
-import ReadonlyField from "./components/ReadonlyField";
-import UnitField from "./components/UnitField";
-import TextField from "./components/TextField";
-import ModuleFields from "./components/ModuleFields";
+import ReadonlyUnitField from "../components/ReadonlyUnitField";
+import ChoiceBox from "../components/ChoiceBox";
+import ReadonlyField from "../components/ReadonlyField";
+import UnitField from "../components/UnitField";
+import TextField from "../components/TextField";
+import ModuleFields from "../components/ModuleFields";
+import { n } from "../utils/numbers";
 
 const labels = {
   type: "Type",
   Pm: "Puissance max",
-  Voc: () => <abbr title="Tension en circuit ouvert">V<sub>oc</sub></abbr>,
-  Isc: () => <abbr title="Courant de court-circuit">I<sub>sc</sub></abbr>,
-  Vmp: () => <abbr title="Tension de puissance max">V<sub>mp</sub></abbr>,
-  Imp: () => <abbr title="Courant de puissance max">I<sub>mp</sub></abbr>,
+  Voc: "Tension en circuit ouvert",
+  Isc: "Courant de court-circuit",
+  Vmp: "Tension de puissance max",
+  Imp: "Courant de puissance max",
 };
 
-export default function DimFieldsPV({
+export default function DimPV({
   project, setValue
 }: {
   project: Project,
@@ -27,7 +28,7 @@ export default function DimFieldsPV({
 }) {
 
   const index = project.module;
-  const module = index === -1 ? null : PVModules[index];
+  const module = index === -1 ? null : PVModels[index];
 
   const El = project.El;
   const Vsystem = project.Vsystem;
@@ -35,7 +36,7 @@ export default function DimFieldsPV({
   const Kloss = project.Kloss;
   const Ƞb = project.Ƞb;
 
-  const Pc = project.Pc;
+  const Pc = n(project.Pc, 2);
 
   const Msc = project.Msc;
   const Mpc = project.Mpc;
@@ -65,12 +66,12 @@ export default function DimFieldsPV({
     <hr />
     <ReadonlyUnitField
       label="Puissance à installer"
-      value={isFinite(Pc) ? Pc.toFixed(2) : "N/A"}
+      value={Pc}
       unit="Kw"
     />
     <ChoiceBox
       label="Choix de module"
-      items={PVModules}
+      items={PVModels}
       value={index}
       onChange={value => setValue("module", value)}
     />
@@ -88,20 +89,20 @@ export default function DimFieldsPV({
     <UnitField
       value={Vsystem} unit="V"
       min={0} max={48} step={12}
-      field={() => <>V<sub>système</sub></>}
+      field="Tension du system"
       setValue={value => setValue("Vsystem", value)}
     />
     <ReadonlyField
       label="Modules en serie"
-      value={isFinite(Msc) ? Msc.toFixed(2) : "N/A"}
+      value={n(Msc, 2)}
     />
     <ReadonlyField
       label="Modules en parallel"
-      value={isFinite(Mpc) ? Mpc.toFixed(2) : "N/A"}
+      value={n(Mpc, 2)}
     />
     <ReadonlyField
       label="Nombre de modules total"
-      value={isFinite(Mtc) ? Mtc.toFixed(2) : "N/A"}
+      value={n(Mtc, 2)}
     />
   </>;
 };

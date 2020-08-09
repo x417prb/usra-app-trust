@@ -1,13 +1,14 @@
 import React from "react";
 
-import { ProjectValueName } from "./state/actions";
-import { Project, InverterModuleData } from "./state/State";
-import ReadonlyUnitField from "./components/ReadonlyUnitField";
-import ChoiceBox from "./components/ChoiceBox";
-import { InverterModules as InverterModels } from "./state/reducer";
-import ModuleFields from "./components/ModuleFields";
+import { ProjectValueName } from "../state/actions";
+import { Project, ModelOnduleur } from "../state/State";
+import ReadonlyUnitField from "../components/ReadonlyUnitField";
+import ChoiceBox from "../components/ChoiceBox";
+import { InverterModules as InverterModels } from "../state/reducer";
+import ModuleFields from "../components/ModuleFields";
+import { percentage } from "../utils/numbers";
 
-const labels: Record<keyof InverterModuleData, string> = {
+const labels: Record<keyof ModelOnduleur, string> = {
   vendor: "Marque",
   Pnom: "Puissance nominale",
   PVmpp: "Plage de tension MPP",
@@ -15,7 +16,7 @@ const labels: Record<keyof InverterModuleData, string> = {
   Ƞ: "Rendement",
 };
 
-export default function DimFieldsI({
+export default function DimOnduleur({
   project, setValue
 }: {
   project: Project;
@@ -48,7 +49,7 @@ export default function DimFieldsI({
         Pnom: `${inverter.Pnom} Kw`,
         PVmpp: `de ${inverter.PVmpp.join(" a ")} V`,
         Vmax: `${inverter.Vmax} V`,
-        Ƞ: `${(inverter.Ƞ * 100).toFixed(2)}%`,
+        Ƞ: `${percentage(inverter.Ƞ)}`,
       } : null}
     />
   </>;

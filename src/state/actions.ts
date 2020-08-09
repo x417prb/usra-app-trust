@@ -64,7 +64,10 @@ export type ProjectValueName = (
   "Vsystem" |
   "Nc" |
   "DODmax" |
-  "Ƞout"
+  "Ƞout" |
+  "Lmr" |
+  "Lbi" |
+  "Lic"
 );
 
 export function setProjectValue(id: number, name: ProjectValueName, value: number): SetProjectValue {

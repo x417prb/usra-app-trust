@@ -7,6 +7,6 @@
     "**/.DS_Store": true,
     "**/src/react-app-env.d.ts": true,
     "**/src/serviceWorker.ts": true,
-    "**/src/setupTests.ts": true,
+    "**/src/setupTests.ts": true
   }
 }

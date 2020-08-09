@@ -1,14 +1,15 @@
 import React from "react";
-import { ProjectValueName } from "./state/actions";
-import ReadonlyUnitField from "./components/ReadonlyUnitField";
-import ChoiceBox from "./components/ChoiceBox";
-import { BatteryModules } from "./state/reducer";
-import { Project, BatteryModuleData } from "./state/State";
-import ModuleFields from "./components/ModuleFields";
-import TextField from "./components/TextField";
-import ReadonlyField from "./components/ReadonlyField";
+import { ProjectValueName } from "../state/actions";
+import ReadonlyUnitField from "../components/ReadonlyUnitField";
+import ChoiceBox from "../components/ChoiceBox";
+import { BatteryModules } from "../state/reducer";
+import { Project, ModelBattery } from "../state/State";
+import ModuleFields from "../components/ModuleFields";
+import TextField from "../components/TextField";
+import ReadonlyField from "../components/ReadonlyField";
+import { n, percentage } from "../utils/numbers";
 
-const labels: Record<keyof BatteryModuleData, string> = {
+const labels: Record<keyof ModelBattery, string> = {
   model: "Model",
   vendor: "Marque",
   Vnom: "Tension norminale",
@@ -16,7 +17,7 @@ const labels: Record<keyof BatteryModuleData, string> = {
   Ƞ: "Rendement"
 };
 
-export default function DimFieldsB({
+export default function DimBatteries({
   project, setValue
 }: {
   project: Project;
@@ -30,7 +31,7 @@ export default function DimFieldsB({
   const index = project.battery;
   const battery = index === -1 ? null : BatteryModules[index];
 
-  const Cx = project.Cx;
+  const Cx = n(project.Cx, 2);
   const Bsc = project.Bsc;
   const Bpc = project.Bpc;
   const Bt = project.Bt;
@@ -56,8 +57,7 @@ export default function DimFieldsB({
     />
     <ReadonlyUnitField
       label="Capacite des batteries a installer"
-      value={isFinite(Cx) ? Cx.toFixed(2) : "N/A"}
-      unit="Ah"
+      value={Cx} unit="Ah"
     />
     <ChoiceBox
       label="Choix de battries"
@@ -75,20 +75,20 @@ export default function DimFieldsB({
         vendor: battery.vendor,
         Vnom: `${battery.Vnom} V`,
         Cnom: `${battery.Cnom} Ah`,
-        R: `${(battery.Ƞ * 100).toFixed(2)}%`,
+        Ƞ: `${percentage(battery.Ƞ)}`,
       } : null}
     />
     <ReadonlyField
       label="Nombre des battries total"
-      value={isFinite(Bt) ? Bt : "N/A"}
+      value={n(Bt)}
     />
     <ReadonlyField
       label="Nombre des battries en series"
-      value={isFinite(Bsc) ? Bsc : "N/A"}
+      value={n(Bsc)}
     />
     <ReadonlyField
       label="Nombre des battries en parallel"
-      value={isFinite(Bpc) ? Bpc : "N/A"}
+      value={n(Bpc)}
     />
   </>;
 
