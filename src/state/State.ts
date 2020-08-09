@@ -51,16 +51,15 @@ export interface Project {
   Rc: number;
 
   Lmr: number;
+  Vmr: number;
+  Smr: number;
   Lbi: number;
+  Ibi: number;
+  Vbi: number;
+  Sbi: number;
   Lic: number;
-
-  Idmr: number;
-  Idbi: number;
-  Idic: number;
-
-  Sdmr: number;
-  Sdbi: number;
-  Sdic: number;
+  Iic: number;
+  Sic: number;
 
 }
 

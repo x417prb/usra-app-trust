@@ -6,11 +6,11 @@ import { connect } from "react-redux";
 import { setProjectNeeds, setProjectValue } from "./state/actions";
 
 import Besoins from "./Besoins";
-import DimPV from "./dimentionement/PV";
+import PV from "./dimentionement/PV";
 import DimBatteries from "./dimentionement/Battries";
 import DimOnduleur from "./dimentionement/Onduleur";
 import DimFieldsR from "./dimentionement/Regulateur";
-import DimCables from "./dimentionement/Cables";
+import Cables from "./dimentionement/Cables";
 import Report from "./Report";
 
 export default connect((state: State, { current }: { current: number }) => {
@@ -64,7 +64,7 @@ export default connect((state: State, { current }: { current: number }) => {
         />
       </div>
       <div className="tab-pane py-4 fade" id="dim-pv">
-        <DimPV
+        <PV
           project={project}
           setValue={(name, value) => setValue(project.id, name, value)}
         />
@@ -88,7 +88,7 @@ export default connect((state: State, { current }: { current: number }) => {
         />
       </div>
       <div className="tab-pane py-4 fade" id="dim-cab">
-        <DimCables
+        <Cables
           project={project}
           setValue={(name, value) => setValue(project.id, name, value)}
         />

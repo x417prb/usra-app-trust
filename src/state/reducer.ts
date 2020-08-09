@@ -7,6 +7,7 @@ import State, {
 } from "./State";
 import Actions from "./actions";
 import { List } from "immutable";
+import { validate } from "../utils/numbers";
 
 type ProjectNeedJSON = ProjectNeed;
 
@@ -112,34 +113,32 @@ export const RegulatorModels: ModelRegulateur[] = [{
 
 export const ρ = 1.724e-8;
 
-export function calcS(I: number, L: number, Vd: number) {
+function calcS(I: number, L: number, Vd: number) {
   return 2e6 * ((ρ * I * L) / Vd);
 }
 
-export function calcVd(V: number) {
+function calcVd(V: number) {
   return 0.04 * V;
 }
 
-export function calcVdmr(Voc: number, Msc: number) {
+function calcVdmr(Voc: number, Msc: number) {
   return calcVd(Voc * Msc * 1.15);
 }
 
-export function calcIbi(Pi: number, Ƞ: number, Vsystem: number) {
+function calcIbi(Pi: number, Ƞ: number, Vsystem: number) {
   return 1000 * Pi / (Ƞ * Vsystem);
 }
 
 const SQRT3 = Math.sqrt(3);
 const VLOAD = 220;
 
-export function calcIic(Pi: number) {
+function calcIic(Pi: number) {
   return Pi / (VLOAD * SQRT3);
 }
 
-export const Vdic = calcVd(VLOAD);
+export const Vic = calcVd(VLOAD);
 
 function mutateUpdateProject(project: Project) {
-
-
 
   const Vsystem = project.Vsystem;
 
@@ -148,27 +147,25 @@ function mutateUpdateProject(project: Project) {
     project.Kloss, project.Htilt
   );
 
-  const module = project.module;
+  const PV = PVModels[project.module];
 
-  const PV = module === -1 ? null : PVModels[module];
   const Isc = PV ? PV.Isc : NaN;
 
-  const Msc = project.Msc = (PV ? Math.ceil(Vsystem / PV.Vmp) : NaN);
-  const Mpc = project.Mpc = (PV && Msc !== 0 ? Math.ceil(Pc / (Msc * PV.Pm)) : NaN);
+  const Msc = project.Msc = Math.ceil(Vsystem / validate(PV?.Vmp));
+  const Mpc = project.Mpc = Math.ceil(Pc / (Msc * validate(PV?.Pm)));
   project.Mt = Mpc * Msc;
 
   const Nc = project.Nc;
   const DODmax = project.DODmax;
   const Ƞout = project.Ƞout;
 
-  const battery = project.battery;
-
-  const B = battery === -1 ? null : BatteryModules[battery];
+  const battery = BatteryModules[project.battery];
+  const inverter = InverterModules[project.inverter];
 
   const Cx = project.Cx = calculateCx(Nc, project.El, DODmax, Vsystem, Ƞout);
 
-  const Bt = project.Bt = (B ? Math.ceil(Cx / B.Cnom) : NaN);
-  const Bsc = project.Bsc = (B ? Math.ceil(Vsystem / B.Vnom) : NaN);
+  const Bt = project.Bt = Math.ceil(Cx / validate(battery?.Cnom));
+  const Bsc = project.Bsc = Math.ceil(Vsystem / validate(battery?.Vnom));
   project.Bpc = Math.floor(Bt / Bsc);
 
   project.Pi = project.Pf * 1.25;
@@ -179,6 +176,22 @@ function mutateUpdateProject(project: Project) {
   const R = regulator === -1 ? null : RegulatorModels[regulator];
 
   project.Rc = Math.ceil(Irated / (R?.I ?? NaN));
+
+  const Voc = validate(PV?.Voc);
+  const Ƞb = validate(battery?.Ƞ);
+  const Pi = validate(inverter?.Pnom);
+
+  const Lmr = project.Lmr;
+  const Lbi = project.Lbi;
+  const Lic = project.Lic;
+
+  const Vdmr = project.Vmr = calcVdmr(Voc, Msc);
+  project.Smr = calcS(Irated, Lmr, Vdmr);
+  const Ibi = project.Ibi = calcIbi(Pi, Ƞb, Vsystem);
+  const Vbi = project.Vbi = calcVd(Vsystem);
+  project.Sbi = calcS(Ibi, Lbi, Vbi);
+  const Iic = project.Iic = calcIic(Pi);
+  project.Sic = calcS(Iic, Lic, Vic);
 
   return project;
 
@@ -268,14 +281,15 @@ function reducer(state = initial, action: Actions): State {
           Irated: 0,
           Rc: 0,
           Lmr: 0,
+          Vmr: NaN,
+          Smr: NaN,
           Lbi: 0,
+          Ibi: NaN,
+          Vbi: NaN,
+          Sbi: NaN,
           Lic: 0,
-          Idmr: 0,
-          Idbi: 0,
-          Idic: 0,
-          Sdmr: 0,
-          Sdbi: 0,
-          Sdic: 0,
+          Iic: NaN,
+          Sic: NaN,
         })
       };
     };

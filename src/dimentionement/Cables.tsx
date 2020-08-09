@@ -1,14 +1,8 @@
 import React from "react";
 import { Project } from "../state/State";
 import { ProjectValueName } from "../state/actions";
-import {
-  ρ, calcVd, calcVdmr,
-  calcS, PVModels, calcIbi,
-  BatteryModules,
-  InverterModules,
-  calcIic,
-  Vdic,
-} from "../state/reducer";
+
+import { ρ, Vic } from "../state/reducer";
 import { n } from "../utils/numbers";
 
 function formatExponentialNumber(x: number) {
@@ -17,30 +11,12 @@ function formatExponentialNumber(x: number) {
   return <>{F}&times;10<sup>{E}</sup></>;
 }
 
-export default function DimCables({
+export default function Cables({
   project, setValue
 }: {
   project: Project;
   setValue(name: ProjectValueName, value: number): void;
 }) {
-  const Lmr = project.Lmr;
-  const Lbi = project.Lbi;
-  const Lic = project.Lic;
-  const module = project.module;
-  const Voc = module === -1 ? NaN : PVModels[module].Voc;
-  const battery = project.battery;
-  const Ƞb = battery === -1 ? NaN : BatteryModules[battery].Ƞ;
-  const Vsystem = project.Vsystem;
-  const inverter = project.inverter;
-  const Pi = inverter === -1 ? NaN : InverterModules[inverter].Pnom;
-  const Irated = project.Irated;
-  const Vdmr = calcVdmr(Voc, project.Msc);
-  const Smr = calcS(Irated, Lmr, Vdmr);
-  const Ibi = calcIbi(Pi, Ƞb, Vsystem);
-  const Vdbi = calcVd(Vsystem);
-  const Sbi = calcS(Ibi, Lbi, Vdbi);
-  const Iic = calcIic(Pi);
-  const Sic = calcS(Iic, Lic, Vdic);
   return <>
     <div className="table-responsive">
       <table className="table table-sm table-hover align-middle">
@@ -62,12 +38,12 @@ export default function DimCables({
               type="number"
               min="0" step="0.01"
               className="form-control-plaintext"
-              value={Lmr}
+              value={project.Lmr}
               onChange={e => setValue("Lmr", e.target.valueAsNumber)}
             /></td>
-            <td>{n(Irated, 2)}</td>
-            <td>{n(Vdmr, 2)}</td>
-            <td>{n(Smr, 2)}</td>
+            <td>{n(project.Irated, 2)}</td>
+            <td>{n(project.Vmr, 2)}</td>
+            <td>{n(project.Smr, 2)}</td>
           </tr>
           <tr>
             <th>Cables entre parc battries et l'oduleur</th>
@@ -76,12 +52,12 @@ export default function DimCables({
               type="number"
               min="0" step="0.01"
               className="form-control-plaintext"
-              value={Lbi}
+              value={project.Lbi}
               onChange={e => setValue("Lbi", e.target.valueAsNumber)}
             /></td>
-            <td>{n(Ibi, 2)}</td>
-            <td>{n(Vdbi, 2)}</td>
-            <td>{n(Sbi, 2)}</td>
+            <td>{n(project.Ibi, 2)}</td>
+            <td>{n(project.Vbi, 2)}</td>
+            <td>{n(project.Sbi, 2)}</td>
           </tr>
           <tr>
             <th>Cables entre L'onduleur et la charge</th>
@@ -90,12 +66,12 @@ export default function DimCables({
               type="number"
               min="0" step="0.01"
               className="form-control-plaintext"
-              value={Lic}
+              value={project.Lic}
               onChange={e => setValue("Lic", e.target.valueAsNumber)}
             /></td>
-            <td>{n(Iic, 2)}</td>
-            <td>{n(Vdic, 2)}</td>
-            <td>{n(Sic, 2)}</td>
+            <td>{n(project.Iic, 2)}</td>
+            <td>{n(Vic, 2)}</td>
+            <td>{n(project.Sic, 2)}</td>
           </tr>
         </tbody>
       </table>

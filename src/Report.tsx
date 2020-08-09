@@ -61,9 +61,9 @@ export default function Report({
   const OndCapacite = n(InverterModules[project.inverter]?.Pnom, 2, "KVA");
   const OndBesoinEntre = n(project.Vsystem, 2, "V");
 
-  const CablePVReg = 0;
-  const CableBatsOnd = 0;
-  const CableOndCharge = 0;
+  const CablePVReg = `${n(project.Irated, 2, "A")}; ${n(project.Smr, 2, "mm²")}`;
+  const CableBatsOnd = `${n(project.Ibi, 2, "A")}; ${n(project.Sbi, 2, "mm²")}`;
+  const CableOndCharge = `${n(project.Iic, 2, "A")}; ${n(project.Sic, 2, "mm²")}`;
 
   return <>
     <div className="border rounded-sm border-secondary text-center p-2">
@@ -79,14 +79,14 @@ export default function Report({
       <div className="d-flex justify-content-between align-items-stretch mb-3">
         {/* <img src="https://via.placeholder.com/150" className="rounded float-left" /> */}
         <div className="d-flex flex-grow-1 flex-column justify-content-center align-items-stretch text-center">
-          <h1>Systeme isole avec battries</h1>
+          <h1>Syst&egrave;me isol&eacute; avec battries</h1>
           <h3>rapport de simulation</h3>
         </div>
         {/* <img src="https://via.placeholder.com/150" className="rounded float-left" /> */}
       </div>
       <p>Nom du projet: {project.name}</p>
       <p>Site geographique: {project.site}</p>
-      <p>La consomation moyenne journaliere: {project.El} Kwh/j</p>
+      <p>La consomation moyenne journali&egrave;re: {project.El} Kwh/j</p>
       <p>La production energetique: {PVPuissanceProduite}</p>
       <p>Capacite de stockage: {BatCapacite}</p>
       <p className="ml-5">Satisfaction de besoin: Une bonne satisfaction</p>
@@ -179,6 +179,12 @@ export default function Report({
             </tr>
           </tbody>
         </table>
+      </div>
+      <div className="d-print-none text-center">
+        <button
+          className="btn btn-success"
+          onClick={() => window.print()}
+        >Imprimer</button>
       </div>
     </div>
   </>;

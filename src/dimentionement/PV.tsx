@@ -20,7 +20,7 @@ const labels = {
   Imp: "Courant de puissance max",
 };
 
-export default function DimPV({
+export default function PV({
   project, setValue
 }: {
   project: Project,
