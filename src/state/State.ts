@@ -16,7 +16,7 @@ export interface Project {
   site: string;
 
   needs: List<ProjectNeed>;
-  El: number;
+  energyBesoinTotal: number;
   Pf: number;
 
   module: number;
@@ -46,6 +46,8 @@ export interface Project {
   Bt: number;
 
   Pi: number;
+  nombreOnduleur: number;
+
   Irated: number;
 
   Rc: number;

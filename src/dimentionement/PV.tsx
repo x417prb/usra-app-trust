@@ -32,22 +32,25 @@ export default function PV({
   return <>
     <ReadonlyUnitField
       label="Energy total"
-      value={n(project.El, 2)}
-      unit="Kwh/d"
+      value={n(project.energyBesoinTotal, 2)}
+      unit="Kwh/j"
     />
     <TextField
       field={() => <>H<sub>tilt</sub></>}
-      value={n(project.Htilt, 2)}
+      value={n(project.Htilt)}
+      min={0} step={0.01}
       setValue={value => setValue("Htilt", value)}
     />
     <TextField
       field={() => <>K<sub>loss</sub></>}
-      value={n(project.Kloss, 2)}
+      value={n(project.Kloss)}
+      min={0} step={0.01}
       setValue={value => setValue("Kloss", value)}
     />
     <TextField
       field="Efficacite d'equilibre"
-      value={n(project.Ƞb, 2)}
+      value={n(project.Ƞb)}
+      min={0} step={0.01}
       setValue={value => setValue("Ƞb", value)}
     />
     <hr />
@@ -65,7 +68,7 @@ export default function PV({
     <ModuleFields
       module={PV ? {
         type: PV.type,
-        Pm: `${PV.Pm} Kw`,
+        Pm: `${PV.Pm} Wc`,
         Voc: `${PV.Voc} V`,
         Isc: `${PV.Isc} A`,
         Vmp: `${PV.Vmp} V`,
@@ -81,15 +84,15 @@ export default function PV({
     />
     <ReadonlyField
       label="Modules en serie"
-      value={n(project.Msc, 2)}
+      value={n(project.Msc)}
     />
     <ReadonlyField
       label="Modules en parallel"
-      value={n(project.Mpc, 2)}
+      value={n(project.Mpc)}
     />
     <ReadonlyField
       label="Nombre de modules total"
-      value={n(project.Mt, 2)}
+      value={n(project.Mt)}
     />
   </>;
 };

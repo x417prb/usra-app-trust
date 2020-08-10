@@ -73,6 +73,7 @@ export default function Besoins({
   needs: List<ProjectNeed>;
   setNeeds(id: number, needs: List<ProjectNeed>): void;
 }) {
+
   const total = needs.reduce(reduceProjectTotalNeed, {
     name: "Total",
     energy: 0,
@@ -92,8 +93,8 @@ export default function Besoins({
             <th scope="col" title="Nom de l'equipement">Equipement</th>
             <th scope="col" title="Nombre d'heurs d'uitilisation par jour">Utilisation (h/j)</th>
             <th scope="col" title="Quantité d'equipement utilisé">Quantité</th>
-            <th scope="col" title="Puissance de l'equipement en KiloWatt">Puissance (Kw)</th>
-            <th scope="col" title="Puissance des equipements en KiloWatt">Puissance foisonée (Kw)</th>
+            <th scope="col" title="Puissance de l'equipement en KiloWatt">Puissance (w)</th>
+            <th scope="col" title="Puissance des equipements en KiloWatt">Puissance foisonée (w)</th>
             <th scope="col" title="Energie consomée par les equipements en KiloWatt-heur par jour">Energie (Kwh/j)</th>
           </tr>
         </thead>
@@ -147,10 +148,10 @@ export default function Besoins({
                     type="number"
                     min="0" step="0.01"
                     className="form-control-plaintext"
-                    value={need.power.toFixed(2)}
+                    value={need.power}
                     onChange={e => setNeeds(current, setNeedPower(needs, index, e.target.valueAsNumber))}
                   /></td>
-                  <td>{need.prolifiratedPower.toFixed(2)}</td>
+                  <td>{need.prolifiratedPower}</td>
                   <td>{need.energy.toFixed(2)}</td>
                 </tr>
               ))

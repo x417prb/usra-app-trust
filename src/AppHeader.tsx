@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
-const NAME = "Stern Sim";
+const NAME = "Simulateur PV";
 
 function setTitle() {
   document.title = NAME;

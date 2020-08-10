@@ -59,7 +59,8 @@ export default function Report({
   const RegNombre = n(project.Rc);
 
   const OndCapacite = n(InverterModules[project.inverter]?.Pnom, 2, "KVA");
-  const OndBesoinEntre = n(project.Vsystem, 2, "V");
+  const OndBesoinEntre = n(project.Vsystem, undefined, "V");
+  const OndNombre = n(project.nombreOnduleur);
 
   const CablePVReg = `${n(project.Irated, 2, "A")}; ${n(project.Smr, 2, "mm²")}`;
   const CableBatsOnd = `${n(project.Ibi, 2, "A")}; ${n(project.Sbi, 2, "mm²")}`;
@@ -84,14 +85,13 @@ export default function Report({
         </div>
         {/* <img src="https://via.placeholder.com/150" className="rounded float-left" /> */}
       </div>
-      <p>Nom du projet: {project.name}</p>
-      <p>Site geographique: {project.site}</p>
-      <p>La consomation moyenne journali&egrave;re: {project.El} Kwh/j</p>
-      <p>La production energetique: {PVPuissanceProduite}</p>
-      <p>Capacite de stockage: {BatCapacite}</p>
-      <p className="ml-5">Satisfaction de besoin: Une bonne satisfaction</p>
-      <figure className="border rounded-sm border-secondary text-center p-3">
-        <img src={(process.env.PUBLIC_URL + "/diagram.svg").replace(/\/\//, "/")} alt="Schema de l'installation" />
+      <p><b>Nom du projet</b>: {project.name}</p>
+      <p><b>Site geographique</b>: {project.site}</p>
+      <p><b>La consomation moyenne journali&egrave;re</b>: {project.energyBesoinTotal} Kwh/j</p>
+      <p><b>La production energetique</b>: {PVPuissanceProduite}</p>
+      <p><b>Capacite de stockage</b>: {BatCapacite}</p>
+      <figure className="text-center p-1">
+        <img width="60%" className="border rounded-sm border-secondary p-3" src={(process.env.PUBLIC_URL + "/diagram.svg").replace(/\/\//, "/")} alt="Schema de l'installation" />
         <figcaption className="figure-caption">Schema de l'installation.</figcaption>
       </figure>
       <h5>Bilan de dimensionnement</h5>
@@ -105,76 +105,76 @@ export default function Report({
           <tbody>
             <tr>
               <th>Estimation du besoin</th>
-              <td>L'energie moyenne journaliere a consommer</td>
-              <td>{project.El} Kwh/j</td>
+              <td className="text-right">L'energie moyenne journaliere a consommer</td>
+              <td>{project.energyBesoinTotal} Kwh/j</td>
             </tr>
             <tr>
               <th rowSpan={4}>ChampPV</th>
-              <td>La puissance produite</td>
+              <td className="text-right">La puissance produite</td>
               <td>{PVPuissanceProduite}</td>
             </tr>
             <tr>
-              <td>Nombre de PV en serie</td>
+              <td className="text-right">Nombre de PV en serie</td>
               <td>{PVNombreSerie}</td>
             </tr>
             <tr>
-              <td>Nombre de PV en parallel</td>
+              <td className="text-right">Nombre de PV en parallel</td>
               <td>{PVNombreParallel}</td>
             </tr>
             <tr>
-              <td>Nombre total des panneaux</td>
+              <td className="text-right">Nombre total des panneaux</td>
               <td>{PVNombreTotal}</td>
             </tr>
             <tr>
               <th rowSpan={4}>Parc batteries</th>
-              <td>La capacite des batteries</td>
+              <td className="text-right">La capacite des batteries</td>
               <td>{BatCapacite}</td>
             </tr>
             <tr>
-              <td>Nombre de battries en serie</td>
+              <td className="text-right">Nombre de battries en serie</td>
               <td>{BatNombreSerie}</td>
             </tr>
             <tr>
-              <td>Nombre des battries en parallel</td>
+              <td className="text-right">Nombre des battries en parallel</td>
               <td>{BatNombreParallel}</td>
             </tr>
             <tr>
-              <td>Nombre total des battries</td>
+              <td className="text-right">Nombre total des battries</td>
               <td>{BatNombreTotal}</td>
             </tr>
             <tr>
               <th rowSpan={2}>Regulateur</th>
-              <td>Capacite du regulateur</td>
+              <td className="text-right">Capacite du regulateur</td>
               <td>{RegCapacite}</td>
             </tr>
             <tr>
-              <td>Nombre de regulateur</td>
+              <td className="text-right">Nombre de regulateur</td>
               <td>{RegNombre}</td>
             </tr>
             <tr>
               <th rowSpan={3}>Onduleur</th>
-              <td>Capacite d'onduleur</td>
+              <td className="text-right">Capacite d'onduleur</td>
               <td>{OndCapacite}</td>
             </tr>
             <tr>
-              <td>Besoin d'entree</td>
+              <td className="text-right">Besoin d'entree</td>
               <td>{OndBesoinEntre}</td>
             </tr>
             <tr>
-              <td>Nombre d'onduleur</td>
-              <td>1</td>
+              <td className="text-right">Nombre d'onduleur</td>
+              <td>{OndNombre}</td>
             </tr>
             <tr>
               <th rowSpan={3}>Cables</th>
-              <td>Entre champ PV et regulateur</td>
+              <td className="text-right">Entre champ PV et regulateur</td>
               <td>{CablePVReg}</td>
             </tr>
             <tr>
-              <td>Entre battries et onduleur</td>
+              <td className="text-right">Entre battries et onduleur</td>
               <td>{CableBatsOnd}</td>
             </tr>
             <tr>
-              <td>Entre onduleur et charge</td>
+              <td className="text-right">Entre onduleur et charge</td>
               <td>{CableOndCharge}</td>
             </tr>
           </tbody>

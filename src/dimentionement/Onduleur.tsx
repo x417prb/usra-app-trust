@@ -6,7 +6,8 @@ import ReadonlyUnitField from "../components/ReadonlyUnitField";
 import ChoiceBox from "../components/ChoiceBox";
 import { InverterModules as InverterModels } from "../state/reducer";
 import ModuleFields from "../components/ModuleFields";
-import { percentage } from "../utils/numbers";
+import { percentage, n } from "../utils/numbers";
+import ReadonlyField from "../components/ReadonlyField";
 
 const labels: Record<keyof ModelOnduleur, string> = {
   vendor: "Marque",
@@ -26,11 +27,11 @@ export default function DimOnduleur({
   const inverter = index === -1 ? null : InverterModels[index];
   return <>
     <ReadonlyUnitField
-      value={project.Pi} unit="Kw"
+      value={n(project.Pi, 2)} unit="Kw"
       label="Puissance d'onduleur"
     />
     <ReadonlyUnitField
-      value={project.Vsystem} unit="V"
+      value={n(project.Vsystem, 2)} unit="V"
       label="Tension d'onduleur"
     />
     <ChoiceBox
@@ -46,11 +47,15 @@ export default function DimOnduleur({
       labels={labels}
       module={inverter ? {
         vendor: inverter.vendor,
-        Pnom: `${inverter.Pnom} Kw`,
+        Pnom: `${inverter.Pnom} KVA`,
         PVmpp: `de ${inverter.PVmpp.join(" a ")} V`,
         Vmax: `${inverter.Vmax} V`,
         Ƞ: `${percentage(inverter.Ƞ)}`,
       } : null}
+    />
+    <ReadonlyField
+      value={n(project.nombreOnduleur)}
+      label="Nombre d'onduleur"
     />
   </>;
 }

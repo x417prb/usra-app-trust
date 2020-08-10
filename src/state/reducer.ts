@@ -25,7 +25,7 @@ const initial: State = saved ? decode(JSON.parse(saved)) : {
 };
 
 export function mutateCalcProjectNeed(n: ProjectNeed) {
-  n.energy = n.hours * (n.prolifiratedPower = n.quantity * n.power);
+  n.energy = n.hours * ((n.prolifiratedPower = n.quantity * n.power) / 1000);
   return n;
 }
 
@@ -34,7 +34,7 @@ function reduceProjectNeedsTotalEnergy(total: number, need: ProjectNeed) {
 }
 
 function reduceProjectNeedsProlifiratedPower(total: number, need: ProjectNeed) {
-  return total + need.energy;
+  return total + need.prolifiratedPower;
 }
 
 function calculateTotalEnergy(needs: List<ProjectNeed>) {
@@ -51,15 +51,21 @@ let projectID = initial.projects.reduce((maximum, project) => {
 
 const PSI = 1;
 
-function calculatePc(Et: number, Eb: number, Kloss: number, Htilt: number) {
-  return (Et / (Eb * Kloss * Htilt)) * PSI;
+function calculatePc(El: number, Ƞb: number, Kloss: number, Htilt: number) {
+  return (El / (Ƞb * Kloss * Htilt)) * PSI;
 }
 
 function calculateCx(Nc: number, El: number, DODmax: number, Vsystem: number, Ƞout: number) {
-  return (Nc * El * 1000) / (DODmax * Vsystem * Ƞout);
+  return (Nc * 1000 * El) / (DODmax * Vsystem * Ƞout);
 }
 
 export const BatteryModules: ModelBattery[] = [{
+  model: "12MD325P",
+  vendor: "Rolls",
+  Vnom: 12,
+  Cnom: 325,
+  Ƞ: 0.98
+}, {
   model: "Solar 12V / 160 Ah",
   vendor: "Generic",
   Vnom: 12,
@@ -74,6 +80,16 @@ export const BatteryModules: ModelBattery[] = [{
 }];
 
 export const PVModels: ModelPV[] = [{
+  name: "ENP Sonne 180Wc",
+  type: "Polycristalline",
+  Voc: 38.2,
+  Vmp: 24,
+  Pm: 180,
+  Isc: 5.38,
+  Imp: 5.20,
+  output: 0.1598,
+  temperture: [-40, +85]
+}, {
   name: "SUNTECH 280Wc",
   Pm: 260,
   Voc: 38.2,
@@ -96,6 +112,12 @@ export const PVModels: ModelPV[] = [{
 }];
 
 export const InverterModules: ModelOnduleur[] = [{
+  vendor: "15Kva Offgrid Solo Inverter",
+  Pnom: 15,
+  PVmpp: [120, 440],
+  Vmax: 550,
+  Ƞ: 0.97
+}, {
   vendor: "Generic",
   Pnom: 3,
   PVmpp: [125, 440],
@@ -133,7 +155,7 @@ const SQRT3 = Math.sqrt(3);
 const VLOAD = 220;
 
 function calcIic(Pi: number) {
-  return Pi / (VLOAD * SQRT3);
+  return 1000 * Pi / (VLOAD * SQRT3);
 }
 
 export const Vic = calcVd(VLOAD);
@@ -143,16 +165,17 @@ function mutateUpdateProject(project: Project) {
   const Vsystem = project.Vsystem;
 
   const Pc = project.Pc = calculatePc(
-    project.El, project.Ƞb,
+    project.energyBesoinTotal,
+    project.Ƞb,
     project.Kloss, project.Htilt
   );
 
   const PV = PVModels[project.module];
 
-  const Isc = PV ? PV.Isc : NaN;
+  const Isc = validate(PV?.Isc);
 
   const Msc = project.Msc = Math.ceil(Vsystem / validate(PV?.Vmp));
-  const Mpc = project.Mpc = Math.ceil(Pc / (Msc * validate(PV?.Pm)));
+  const Mpc = project.Mpc = Math.ceil((1000 * Pc) / (Msc * validate(PV?.Pm)));
   project.Mt = Mpc * Msc;
 
   const Nc = project.Nc;
@@ -162,23 +185,23 @@ function mutateUpdateProject(project: Project) {
   const battery = BatteryModules[project.battery];
   const inverter = InverterModules[project.inverter];
 
-  const Cx = project.Cx = calculateCx(Nc, project.El, DODmax, Vsystem, Ƞout);
+  const Cx = project.Cx = calculateCx(Nc, project.energyBesoinTotal, DODmax, Vsystem, Ƞout);
 
   const Bt = project.Bt = Math.ceil(Cx / validate(battery?.Cnom));
   const Bsc = project.Bsc = Math.ceil(Vsystem / validate(battery?.Vnom));
   project.Bpc = Math.floor(Bt / Bsc);
 
-  project.Pi = project.Pf * 1.25;
+  project.Pi = (project.Pf * 1.25) / 1000;
+  project.nombreOnduleur = Math.max(1, Math.round(project.Pi / validate(inverter?.Pnom)));
 
   const Irated = project.Irated = Isc * Mpc * 1.25;
-  const regulator = project.regulator;
 
-  const R = regulator === -1 ? null : RegulatorModels[regulator];
+  const regulateur = RegulatorModels[project.regulator];
 
-  project.Rc = Math.ceil(Irated / (R?.I ?? NaN));
+  project.Rc = Math.ceil(Irated / validate(regulateur?.I));
 
   const Voc = validate(PV?.Voc);
-  const Ƞb = validate(battery?.Ƞ);
+  const Ƞbatterie = validate(battery?.Ƞ);
   const Pi = validate(inverter?.Pnom);
 
   const Lmr = project.Lmr;
@@ -187,7 +210,7 @@ function mutateUpdateProject(project: Project) {
 
   const Vdmr = project.Vmr = calcVdmr(Voc, Msc);
   project.Smr = calcS(Irated, Lmr, Vdmr);
-  const Ibi = project.Ibi = calcIbi(Pi, Ƞb, Vsystem);
+  const Ibi = project.Ibi = calcIbi(Pi, Ƞbatterie, Vsystem);
   const Vbi = project.Vbi = calcVd(Vsystem);
   project.Sbi = calcS(Ibi, Lbi, Vbi);
   const Iic = project.Iic = calcIic(Pi);
@@ -224,7 +247,7 @@ function reducer(state = initial, action: Actions): State {
         projects: state.projects.set(id, mutateUpdateProject({
           ...projet,
           needs: $needs,
-          El: calculateTotalEnergy($needs),
+          energyBesoinTotal: calculateTotalEnergy($needs),
           Pf: calculateProlifiratedPower($needs),
         } as Project))
       };
@@ -256,7 +279,7 @@ function reducer(state = initial, action: Actions): State {
           id: projectID++,
           name, site,
           needs: List(),
-          El: 0,
+          energyBesoinTotal: 0,
           Pf: 0,
           Htilt: 0,
           Kloss: 0,
@@ -270,7 +293,7 @@ function reducer(state = initial, action: Actions): State {
           inverter: -1,
           regulator: -1,
           Ƞb: 0,
-          Nc: 0,
+          Nc: 1,
           DODmax: 0.01,
           Ƞout: 0.01,
           Cx: 0,
@@ -278,6 +301,7 @@ function reducer(state = initial, action: Actions): State {
           Bsc: 0,
           Bt: 0,
           Pi: 0,
+          nombreOnduleur: NaN,
           Irated: 0,
           Rc: 0,
           Lmr: 0,
