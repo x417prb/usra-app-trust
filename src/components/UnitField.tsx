@@ -10,7 +10,7 @@ export default function UnitField({
   setValue(value: number): void;
 }) {
   return <div className="mb-3 row">
-    <label className="offset-sm-2 col-sm-3 col-form-label">{
+    <label className="offset-sm-2 col-sm-4 col-form-label">{
       typeof field === "string" ? field : field()
     }:</label>
     <div className="col-sm-4">

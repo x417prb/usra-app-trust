@@ -13,16 +13,16 @@ export default function ChoiceBox({
   onChange(value: number): void;
 }) {
   return <div className="mb-3 row">
-    <label className="offset-sm-2 col-sm-3 col-form-label">{label}:</label>
+    <label className="offset-sm-2 col-sm-4 col-form-label">{label}:</label>
     <div className="col-sm-4">
       <select
         className="form-select form-select-sm"
         value={value}
         onChange={e => onChange(parseInt(e.target.value, 10))}>
         <option value={-1}></option>
-        { items.map((item, index) => {
+        {items.map((item, index) => {
           return <option key={index} value={index}>{item.name}</option>
-        }) }
+        })}
       </select>
     </div>
   </div>;

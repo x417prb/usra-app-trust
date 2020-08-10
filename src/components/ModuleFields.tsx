@@ -78,7 +78,7 @@ export default function ModuleFields({
   labels: Record<string, Label>
 }) {
   return <div className="mb-3 row">
-    <div className="offset-sm-1 col-sm-9">
+    <div className="offset-sm-1 col-sm-10">
       <div className="card bg-light">
         <div className="card-body"> {
           module

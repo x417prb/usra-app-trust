@@ -14,10 +14,8 @@ export default function ProjectView({ match: { params: { id } } }: RouteComponen
         : <Redirect to="/" />
     }
     <div className="row">
-      <div className="col-xl-9">
-        <ProjectContent current={current} />
-      </div>
-      <div className="col-xl-3">
+      <ProjectContent current={current} />
+      <div className="col-xl-4">
         <ProjectList current={current} />
       </div>
     </div>
