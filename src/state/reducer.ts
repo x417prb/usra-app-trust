@@ -24,10 +24,6 @@ const initial: State = saved ? decode(JSON.parse(saved)) : {
   projects: List()
 };
 
-initial.projects = initial.projects.map(project => {
-  return mutateUpdateProject(project);
-})
-
 export function mutateCalcProjectNeed(n: ProjectNeed) {
   n.energy = n.hours * ((n.prolifiratedPower = n.quantity * n.power) / 1000);
   return n;
@@ -163,6 +159,10 @@ function calcIic(Pi: number) {
 }
 
 export const Vic = calcVd(VLOAD);
+
+initial.projects = initial.projects.map(project => {
+  return mutateUpdateProject(project);
+});
 
 function mutateUpdateProject(project: Project) {
 
