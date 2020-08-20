@@ -176,6 +176,7 @@ function mutateUpdateProject(project: Project) {
 
   const Msc = project.Msc = Math.ceil(Vsystem / validate(PV?.Vmp));
   const Mpc = project.Mpc = Math.ceil((1000 * Pc) / (Msc * validate(PV?.Pm)));
+
   project.Mt = Mpc * Msc;
 
   const Nc = project.Nc;
