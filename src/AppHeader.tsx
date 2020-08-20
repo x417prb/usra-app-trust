@@ -12,7 +12,7 @@ export default function AppHeader() {
   return <nav className="navbar navbar-expand-lg navbar-dark bg-success d-print-none">
     <div className="container-md">
       <Link to="/" className="navbar-brand">
-        <img src={process.env.PUBLIC_URL+"/Header-logo.png"} height="32" />
+        <img src={process.env.PUBLIC_URL+"/Header-logo.png"} height="32" alt="Trust Energy" />
       </Link>
     </div>
   </nav>;

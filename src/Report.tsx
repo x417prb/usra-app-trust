@@ -69,7 +69,7 @@ export default function Report({
   return <>
     <div className="border rounded-sm border-secondary text-center p-2">
       <div className="row justify-content-between align-items-center mb-3">
-        <div className="d-none d-print-flex col-3 align-items-center justify-content-start"><img src={process.env.PUBLIC_URL + "/Header-logo.png"} height="32" /></div>
+        <div className="d-none d-print-flex col-3 align-items-center justify-content-start"><img src={process.env.PUBLIC_URL + "/Header-logo.png"} height="32" alt="Trust Energy" /></div>
         <div className="d-none d-print-block col-6">
           Date de simulation: {formatDateStamp(stamp)}
         </div>
@@ -82,7 +82,7 @@ export default function Report({
             >Imprimer</button>
           </div>
         </div>
-        <div className="d-none d-print-flex col-3 align-items-center justify-content-end"><img src={process.env.PUBLIC_URL + "/logo-carré.png"} height="32" /></div>
+        <div className="d-none d-print-flex col-3 align-items-center justify-content-end"><img src={process.env.PUBLIC_URL + "/logo-carré.png"} height="32" alt="" /></div>
       </div>
     </div>
     <div className="border rounded-sm border-secondary mt-1 p-2">
