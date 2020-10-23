@@ -14,16 +14,16 @@ const labels: Record<keyof ModelBattery, string> = {
   vendor: "Marque",
   Vnom: "Tension norminale",
   Cnom: "Capacite nominale",
-  Ƞ: "Rendement"
+  Ƞ: "Rendement",
 };
 
 export default function DimBatteries({
-  project, setValue
+  project,
+  setValue,
 }: {
   project: Project;
   setValue(name: ProjectValueName, value: number): void;
 }) {
-
   const Nc = project.Nc;
   const DODmax = project.DODmax;
   const Ƞout = project.Ƞout;
@@ -36,60 +36,62 @@ export default function DimBatteries({
   const Bpc = project.Bpc;
   const Bt = project.Bt;
 
-  return <>
-    <TextField
-      field="Nc"
-      min={1} max={10}
-      value={Nc}
-      setValue={value => setValue("Nc", value)}
-    />
-    <TextField
-      field="DODmax"
-      min={0.01} max={1} step={0.01}
-      value={DODmax}
-      setValue={value => setValue("DODmax", value)}
-    />
-    <TextField
-      field="Ƞout"
-      min={0.01} max={1} step={0.01}
-      value={Ƞout}
-      setValue={value => setValue("Ƞout", value)}
-    />
-    <ReadonlyUnitField
-      label="Capacite des batteries a installer"
-      value={Cx} unit="Ah"
-    />
-    <ChoiceBox
-      label="Choix de battries"
-      onChange={value => setValue("battery", value)}
-      value={project.battery}
-      items={BatteryModules.map(module => ({
-        ...module,
-        name: `${module.Vnom}V / ${module.Cnom} Ah ${module.vendor}`
-      }))}
-    />
-    <ModuleFields
-      labels={labels}
-      module={battery ? {
-        model: battery.model,
-        vendor: battery.vendor,
-        Vnom: `${battery.Vnom} V`,
-        Cnom: `${battery.Cnom} Ah`,
-        Ƞ: `${percentage(battery.Ƞ)}`,
-      } : null}
-    />
-    <ReadonlyField
-      label="Nombre des battries total"
-      value={n(Bt)}
-    />
-    <ReadonlyField
-      label="Nombre des battries en series"
-      value={n(Bsc)}
-    />
-    <ReadonlyField
-      label="Nombre des battries en parallel"
-      value={n(Bpc)}
-    />
-  </>;
-
+  return (
+    <>
+      <TextField
+        field="Nc"
+        min={1}
+        max={10}
+        value={Nc}
+        setValue={(value) => setValue("Nc", value)}
+      />
+      <TextField
+        field="DODmax"
+        min={0.01}
+        max={1}
+        step={0.01}
+        value={DODmax}
+        setValue={(value) => setValue("DODmax", value)}
+      />
+      <TextField
+        field="Ƞout"
+        min={0.01}
+        max={1}
+        step={0.01}
+        value={Ƞout}
+        setValue={(value) => setValue("Ƞout", value)}
+      />
+      <ReadonlyUnitField
+        label="Capacite des batteries a installer"
+        value={Cx}
+        unit="Ah"
+      />
+      <ChoiceBox
+        label="Choix de battries"
+        onChange={(value) => setValue("battery", value)}
+        value={project.battery}
+        items={BatteryModules.map((module) => ({
+          ...module,
+          name: `${module.Vnom}V / ${module.Cnom} Ah ${module.vendor}`,
+        }))}
+      />
+      <ModuleFields
+        labels={labels}
+        module={
+          battery
+            ? {
+                model: battery.model,
+                vendor: battery.vendor,
+                Vnom: `${battery.Vnom} V`,
+                Cnom: `${battery.Cnom} Ah`,
+                Ƞ: `${percentage(battery.Ƞ)}`,
+              }
+            : null
+        }
+      />
+      <ReadonlyField label="Nombre des battries total" value={n(Bt)} />
+      <ReadonlyField label="Nombre des battries en series" value={n(Bsc)} />
+      <ReadonlyField label="Nombre des battries en parallel" value={n(Bpc)} />
+    </>
+  );
 }

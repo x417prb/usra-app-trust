@@ -62,12 +62,11 @@ export interface Project {
   Lic: number;
   Iic: number;
   Sic: number;
-
 }
 
 export default interface State {
   projects: List<Project>;
-};
+}
 
 export interface ModelPV {
   name: string;
