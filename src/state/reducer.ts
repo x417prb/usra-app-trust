@@ -68,90 +68,102 @@ function calculateCx(
   return (Nc * 1000 * El) / (DODmax * Vsystem * Ƞout);
 }
 
-export const BatteryModules: ModelBattery[] = [
-  {
-    model: "12MD325P",
-    vendor: "Rolls",
-    Vnom: 12,
-    Cnom: 325,
-    Ƞ: 0.98,
-  },
-  {
-    model: "Solar 12V / 160 Ah",
-    vendor: "Generic",
-    Vnom: 12,
-    Cnom: 160,
-    Ƞ: 0.98,
-  },
-  {
-    model: "12-CS-11PS",
-    vendor: "Rolls",
-    Vnom: 12,
-    Cnom: 296,
-    Ƞ: 0.98,
-  },
-];
+const batteries = localStorage.getItem("batteries");
+export const BatteryModules: ModelBattery[] = batteries
+  ? JSON.parse(batteries)
+  : [
+      {
+        model: "12MD325P",
+        vendor: "Rolls",
+        Vnom: 12,
+        Cnom: 325,
+        Ƞ: 0.98,
+      },
+      {
+        model: "Solar 12V / 160 Ah",
+        vendor: "Generic",
+        Vnom: 12,
+        Cnom: 160,
+        Ƞ: 0.98,
+      },
+      {
+        model: "12-CS-11PS",
+        vendor: "Rolls",
+        Vnom: 12,
+        Cnom: 296,
+        Ƞ: 0.98,
+      },
+    ];
 
-export const PVModels: ModelPV[] = [
-  {
-    name: "ENP Sonne 180Wc",
-    type: "Polycristalline",
-    Voc: 38.2,
-    Vmp: 24,
-    Pm: 180,
-    Isc: 5.38,
-    Imp: 5.2,
-    output: 0.1598,
-    temperture: [-40, +85],
-  },
-  {
-    name: "SUNTECH 280Wc",
-    Pm: 260,
-    Voc: 38.2,
-    Isc: 8.9,
-    Vmp: 30.7,
-    Imp: 8.47,
-    output: 0.1598,
-    temperture: [-40, +85],
-    type: "Polycristalline",
-  },
-  {
-    name: "TESLA POWER",
-    Pm: 280,
-    Voc: 38.2,
-    Isc: 9.38,
-    Vmp: 31.6,
-    Imp: 8.86,
-    output: 0.171,
-    temperture: [-40, +85],
-    type: "Polycristalline",
-  },
-];
+const pv = localStorage.getItem("pv");
+export const PVModules: ModelPV[] = pv
+  ? JSON.parse(pv)
+  : [
+      {
+        name: "ENP Sonne 180Wc",
+        type: "Polycristalline",
+        Voc: 38.2,
+        Vmp: 24,
+        Pm: 180,
+        Isc: 5.38,
+        Imp: 5.2,
+        output: 0.1598,
+        temperture: [-40, +85],
+      },
+      {
+        name: "SUNTECH 280Wc",
+        Pm: 260,
+        Voc: 38.2,
+        Isc: 8.9,
+        Vmp: 30.7,
+        Imp: 8.47,
+        output: 0.1598,
+        temperture: [-40, +85],
+        type: "Polycristalline",
+      },
+      {
+        name: "TESLA POWER",
+        Pm: 280,
+        Voc: 38.2,
+        Isc: 9.38,
+        Vmp: 31.6,
+        Imp: 8.86,
+        output: 0.171,
+        temperture: [-40, +85],
+        type: "Polycristalline",
+      },
+    ];
 
-export const InverterModules: ModelOnduleur[] = [
-  {
-    vendor: "15Kva Offgrid Solo Inverter",
-    Pnom: 15,
-    PVmpp: [120, 440],
-    Vmax: 550,
-    Ƞ: 0.97,
-  },
-  {
-    vendor: "Generic",
-    Pnom: 3,
-    PVmpp: [125, 440],
-    Vmax: 550,
-    Ƞ: 0.97,
-  },
-];
+const inverters = localStorage.getItem("inverters");
+export const InverterModules: ModelOnduleur[] = inverters
+  ? JSON.parse(inverters)
+  : [
+      {
+        vendor: "15Kva Offgrid Solo",
+        Pnom: 15,
+        PVmpp: [120, 440],
+        Vmax: 550,
+        Ƞ: 0.97,
+      },
+      {
+        vendor: "Generic",
+        Pnom: 3,
+        PVmpp: [125, 440],
+        Vmax: 550,
+        Ƞ: 0.97,
+      },
+    ];
 
-export const RegulatorModels: ModelRegulateur[] = [
-  {
-    name: "Xantex - 60A - 12V/24V",
-    I: 60,
-    Vout: 24,
-  },
-];
+const regulators = localStorage.getItem("regulators");
+export const RegulatorModules: ModelRegulateur[] = regulators
+  ? JSON.parse(regulators)
+  : [
+      {
+        name: "Xantex - 60A - 12V/24V",
+        I: 60,
+        Vout: 24,
+      },
+    ];
 
 // Ω
 
@@ -196,7 +208,7 @@ function mutateUpdateProject(project: Project) {
     project.Htilt
   ));
 
-  const PV = PVModels[project.module];
+  const PV = PVModules[project.module];
 
   const Isc = validate(PV?.Isc);
 
@@ -232,7 +244,7 @@ function mutateUpdateProject(project: Project) {
 
   const Irated = (project.Irated = Isc * Mpc * 1.25);
 
-  const regulateur = RegulatorModels[project.regulator];
+  const regulateur = RegulatorModules[project.regulator];
 
   project.Rc = Math.ceil(Irated / validate(regulateur?.I));
 

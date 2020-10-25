@@ -5,7 +5,7 @@ import ChoiceBox from "../components/ChoiceBox";
 import { BatteryModules } from "../state/reducer";
 import { Project, ModelBattery } from "../state/State";
 import ModuleFields from "../components/ModuleFields";
-import TextField from "../components/TextField";
+import NumberField from "../components/NumberField";
 import ReadonlyField from "../components/ReadonlyField";
 import { n, percentage } from "../utils/numbers";
 
@@ -38,14 +38,14 @@ export default function DimBatteries({
 
   return (
     <>
-      <TextField
+      <NumberField
         field="Nc"
         min={1}
         max={10}
         value={Nc}
         setValue={(value) => setValue("Nc", value)}
       />
-      <TextField
+      <NumberField
         field="DODmax"
         min={0.01}
         max={1}
@@ -53,7 +53,7 @@ export default function DimBatteries({
         value={DODmax}
         setValue={(value) => setValue("DODmax", value)}
       />
-      <TextField
+      <NumberField
         field="Ƞout"
         min={0.01}
         max={1}

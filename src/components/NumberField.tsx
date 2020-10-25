@@ -1,6 +1,6 @@
 import React, { HTMLProps } from "react";
 
-export default function TextField({
+export default function NumberField({
   value,
   setValue,
   field,
@@ -8,7 +8,7 @@ export default function TextField({
 }: HTMLProps<HTMLInputElement> & {
   field: string | (() => JSX.Element);
   value: number | string;
-  setValue(value: string): void;
+  setValue(value: number): void;
 }) {
   return (
     <div className="mb-1 row">
@@ -17,9 +17,9 @@ export default function TextField({
       </label>
       <div className="col-sm-4">
         <input
-          type="text"
+          type="number"
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => setValue(e.target.valueAsNumber)}
           className="form-control form-control-sm"
           {...props}
         />

@@ -5,7 +5,7 @@ import { Project, ModelRegulateur } from "../state/State";
 import ReadonlyUnitField from "../components/ReadonlyUnitField";
 import ReadonlyField from "../components/ReadonlyField";
 import ChoiceBox from "../components/ChoiceBox";
-import { RegulatorModels } from "../state/reducer";
+import { RegulatorModules } from "../state/reducer";
 import ModuleFields from "../components/ModuleFields";
 import { n } from "../utils/numbers";
 
@@ -23,7 +23,7 @@ export default function DimFieldsR({
   setValue(name: ProjectValueName, value: number): void;
 }) {
   const index = project.regulator;
-  const regulator = index === -1 ? null : RegulatorModels[index];
+  const regulator = index === -1 ? null : RegulatorModules[index];
   const Rc = project.Rc;
   const Irated = project.Irated;
   return (
@@ -40,7 +40,7 @@ export default function DimFieldsR({
       <ChoiceBox
         value={index}
         onChange={(value) => setValue("regulator", value)}
-        items={RegulatorModels}
+        items={RegulatorModules}
         label="Choix de regulateur"
       />
       <ModuleFields

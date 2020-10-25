@@ -1,13 +1,13 @@
 import React from "react";
 import { Project } from "../state/State";
-import { PVModels } from "../state/reducer";
+import { PVModules } from "../state/reducer";
 import { ProjectValueName } from "../state/actions";
 
 import ReadonlyUnitField from "../components/ReadonlyUnitField";
 import ChoiceBox from "../components/ChoiceBox";
 import ReadonlyField from "../components/ReadonlyField";
 import UnitField from "../components/UnitField";
-import TextField from "../components/TextField";
+import NumberField from "../components/NumberField";
 import ModuleFields from "../components/ModuleFields";
 import { n } from "../utils/numbers";
 
@@ -27,7 +27,7 @@ export default function PV({
   project: Project;
   setValue(name: ProjectValueName, value: number): void;
 }) {
-  const PV = PVModels[project.module];
+  const PV = PVModules[project.module];
 
   return (
     <>
@@ -36,7 +36,7 @@ export default function PV({
         value={n(project.energyBesoinTotal, 2)}
         unit="Kwh/j"
       />
-      <TextField
+      <NumberField
         field={() => (
           <>
             H<sub>tilt</sub>
@@ -47,7 +47,7 @@ export default function PV({
         step={0.01}
         setValue={(value) => setValue("Htilt", value)}
       />
-      <TextField
+      <NumberField
         field={() => (
           <>
             K<sub>loss</sub>
@@ -58,7 +58,7 @@ export default function PV({
         step={0.01}
         setValue={(value) => setValue("Kloss", value)}
       />
-      <TextField
+      <NumberField
         field="Efficacite d'equilibre"
         value={n(project.Ƞb)}
         min={0}
@@ -73,7 +73,7 @@ export default function PV({
       />
       <ChoiceBox
         label="Choix de module"
-        items={PVModels}
+        items={PVModules}
         value={project.module}
         onChange={(value) => setValue("module", value)}
       />

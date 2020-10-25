@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Project } from "./state/State";
-import { PVModels, RegulatorModels, InverterModules } from "./state/reducer";
+import { PVModules, RegulatorModules, InverterModules } from "./state/reducer";
 import { n } from "./utils/numbers";
 
 function getTimeStamp() {
@@ -45,7 +45,7 @@ export default function Report({ project }: { project: Project }) {
     return () => clearInterval(id);
   }, [stamp]);
 
-  const PVPuissanceProduite = n(PVModels[project.module]?.Pm, 2, "Kw");
+  const PVPuissanceProduite = n(PVModules[project.module]?.Pm, 2, "Kw");
   const PVNombreSerie = n(project.Msc);
   const PVNombreParallel = n(project.Mpc);
   const PVNombreTotal = n(project.Mt);
@@ -55,7 +55,7 @@ export default function Report({ project }: { project: Project }) {
   const BatNombreParallel = n(project.Bpc);
   const BatNombreTotal = n(project.Bt);
 
-  const RegCapacite = n(RegulatorModels[project.regulator]?.I, 2, "A");
+  const RegCapacite = n(RegulatorModules[project.regulator]?.I, 2, "A");
   const RegNombre = n(project.Rc);
 
   const OndCapacite = n(InverterModules[project.inverter]?.Pnom, 2, "KVA");
