@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export interface ChoiceItem {
   name: string;
@@ -34,7 +35,9 @@ export default function ChoiceBox({
               );
             })}
           </select>
-          <button className="btn btn-outline-secondary btn-sm">⋮</button>
+          <Link to="/models" className="btn btn-outline-secondary btn-sm">
+            ⋮
+          </Link>
         </div>
       </div>
     </div>

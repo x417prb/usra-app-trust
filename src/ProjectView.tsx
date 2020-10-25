@@ -14,7 +14,7 @@ export default function ProjectView({
   return (
     <>
       {isFinite(current) && current !== -1 ? (
-        <Redirect to={`/${current}`} />
+        <Redirect to={`/p/${current}`} />
       ) : (
         <Redirect to="/" />
       )}

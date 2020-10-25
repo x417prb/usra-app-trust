@@ -51,7 +51,7 @@ export default connect(
         {projects.map((project) => {
           return (
             <Link
-              to={`/${project.id}`}
+              to={`/p/${project.id}`}
               className={`list-group-item list-group-item-action ${
                 state !== ProjectListState.Normal ? "disabled" : ""
               } ${
